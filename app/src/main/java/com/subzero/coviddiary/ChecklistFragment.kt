@@ -21,13 +21,10 @@ class ChecklistFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = DataBindingUtil.inflate<FragmentChecklistBinding>(inflater, R.layout.fragment_checklist, container, false)
-        binding.hallTicketCheckBox.setOnClickListener{
-            Navigation.findNavController(it).navigate(R.id.action_checklistFragment_to_addEntryFragment)
-        }
         val arrayAdapter = ArrayAdapter<String>(requireContext(),R.layout.spinner_layout_min,listOfModesOfTransport)
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         binding.spinnerModeOfTransport.adapter = arrayAdapter
-//        binding.spinnerModeOfTransport.setSelection(0,false)
+        binding.spinnerModeOfTransport.setSelection(0,false)
         Log.i("Yes, Im getting this","Above override methods")
         binding.spinnerModeOfTransport.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -36,6 +33,8 @@ class ChecklistFragment : Fragment() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 Log.i("checkListFrag",listOfModesOfTransport[p2])
                 modeOfTransport = listOfModesOfTransport[p2]
+                Navigation.findNavController(p1!!).navigate(R.id.action_checklistFragment_to_addEntryFragment)
+                binding.spinnerModeOfTransport.setSelection(0,false)
             }
         }
         return binding.root

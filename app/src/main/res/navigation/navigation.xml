@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mavigation"
-    app:startDestination="@id/checklistFragment">
+    app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/checklistFragment"
         android:name="com.subzero.coviddiary.ChecklistFragment"
@@ -18,4 +18,13 @@
         android:name="com.subzero.coviddiary.AddEntryFragment"
         tools:layout="@layout/fragment_add_entry"
         android:label="AddEntryFragment" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.subzero.coviddiary.LoginFragment"
+        tools:layout="@layout/fragment_login"
+        android:label="LoginFragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_checklistFragment"
+            app:destination="@id/checklistFragment" />
+    </fragment>
 </navigation>
