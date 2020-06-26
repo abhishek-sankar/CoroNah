@@ -14,6 +14,7 @@ import com.subzero.coviddiary.databinding.FragmentLoginBinding
 import android.content.Intent
 import android.util.Log
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 
 class LoginFragment : Fragment() {
@@ -26,15 +27,24 @@ class LoginFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater, R.layout.fragment_login,container,false)
         val providers = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().build())
-        binding.firebaseLoginButton.setOnClickListener{
-            startActivityForResult(
-                AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setAvailableProviders(providers)
-                    .build(),
-                RC_SIGN_IN)
+        val user = FirebaseAuth.getInstance().currentUser
+        Log.i("In onCreateView","User deets is "+user)
+        if (user==null) {
+            binding.firebaseLoginButton.setOnClickListener {
+                startActivityForResult(
+                    AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build(),
+                    RC_SIGN_IN
+                )
+            }
+        }else{
+            val navController = findNavController()
+            navController.navigate(R.id.checklistFragment)
         }
 
+//            Navigation.findNavController(this.requireView()).navigate(R.id.action_loginFragment_to_checklistFragment)
         return binding.root
     }
 
@@ -48,7 +58,7 @@ class LoginFragment : Fragment() {
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully signed in
                 val user = FirebaseAuth.getInstance().currentUser
-                Navigation.findNavController(requireContext()).navigate(R.id.action_loginFragment_to_checklistFragment)
+                Navigation.findNavController(this.requireView()).navigate(R.id.action_loginFragment_to_checklistFragment)
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the
