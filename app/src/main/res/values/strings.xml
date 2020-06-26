@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">covidDiary</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="infoText">All the best. \nYou\'ll need it.\nAnything else you wanna let me know?</string>
+    <string name="details_hint">So today...</string>
+    <string name="commute_label">Input Details about your commute.</string>
+    <string name="hallTicketCheck">Hall Ticket</string>
+    <string name="modeOfTransportTextView">How will you be commuting today?</string>
+    <string name="save_button_add_entry">Next</string>
+</resources>
