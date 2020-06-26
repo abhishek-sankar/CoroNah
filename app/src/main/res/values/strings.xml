@@ -8,4 +8,6 @@
     <string name="hallTicketCheck">Hall Ticket</string>
     <string name="modeOfTransportTextView">How will you be commuting today?</string>
     <string name="save_button_add_entry">Next</string>
+    <string name="login_with_google">Hey there!</string>
+    <string name="sign_up">Sign Up</string>
 </resources>

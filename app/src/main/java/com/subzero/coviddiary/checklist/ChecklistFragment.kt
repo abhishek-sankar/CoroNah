@@ -1,4 +1,4 @@
-package com.subzero.coviddiary
+package com.subzero.coviddiary.checklist
 
 import android.content.Context
 import android.os.Bundle
@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
+import com.subzero.coviddiary.R
 import com.subzero.coviddiary.databinding.FragmentChecklistBinding
 class ChecklistFragment : Fragment() {
     var modeOfTransport = ""
@@ -20,8 +21,10 @@ class ChecklistFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = DataBindingUtil.inflate<FragmentChecklistBinding>(inflater, R.layout.fragment_checklist, container, false)
-        val arrayAdapter = ArrayAdapter<String>(requireContext(),R.layout.spinner_layout_min,listOfModesOfTransport)
+        val binding = DataBindingUtil.inflate<FragmentChecklistBinding>(inflater,
+            R.layout.fragment_checklist, container, false)
+        val arrayAdapter = ArrayAdapter<String>(requireContext(),
+            R.layout.spinner_layout_min,listOfModesOfTransport)
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
         binding.spinnerModeOfTransport.adapter = arrayAdapter
         binding.spinnerModeOfTransport.setSelection(0,false)

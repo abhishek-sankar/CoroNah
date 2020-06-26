@@ -6,7 +6,7 @@
     app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/checklistFragment"
-        android:name="com.subzero.coviddiary.ChecklistFragment"
+        android:name="com.subzero.coviddiary.checklist.ChecklistFragment"
         android:label="ChecklistFragment"
         tools:layout="@layout/fragment_checklist">
         <action
@@ -15,12 +15,12 @@
     </fragment>
     <fragment
         android:id="@+id/addEntryFragment"
-        android:name="com.subzero.coviddiary.AddEntryFragment"
+        android:name="com.subzero.coviddiary.addentry.AddEntryFragment"
         tools:layout="@layout/fragment_add_entry"
         android:label="AddEntryFragment" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.subzero.coviddiary.LoginFragment"
+        android:name="com.subzero.coviddiary.login.LoginFragment"
         tools:layout="@layout/fragment_login"
         android:label="LoginFragment" >
         <action

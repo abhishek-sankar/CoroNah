@@ -1,4 +1,4 @@
-package com.subzero.coviddiary
+package com.subzero.coviddiary.login
 
 import android.app.Activity
 import android.os.Bundle
@@ -15,7 +15,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
+import com.subzero.coviddiary.R
 
 class LoginFragment : Fragment() {
     val RC_SIGN_IN = 1
@@ -24,7 +24,8 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater, R.layout.fragment_login,container,false)
+        val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater,
+            R.layout.fragment_login,container,false)
         val providers = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().build())
         val user = FirebaseAuth.getInstance().currentUser
