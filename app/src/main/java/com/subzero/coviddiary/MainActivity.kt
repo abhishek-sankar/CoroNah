@@ -19,21 +19,16 @@ import com.subzero.coviddiary.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     private val TAG = "PermissionDemo"
     private val RECORD_REQUEST_CODE = 1
-    private val     RECORD_REQUEST_CODE_FINE = 2
+    private val RECORD_REQUEST_CODE_FINE = 2
+    private val RECORD_REQUEST_CODE_BG = 3
+
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupPermissions()
-        var location = LocationUtils()
-        location.getInstance(this)
-        Log.i("LocationUtils : ",location.getInstance(this).toString())
-        location.getLocation(this).observe(this, Observer {
-            var locationUpdated = it!!
-            Log.i("In addEntryFrag","Received location "+locationUpdated.latitude+" "+locationUpdated.longitude)
-        })
-        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
+        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
     }
     private fun setupPermissions() {
@@ -41,6 +36,8 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_COARSE_LOCATION)
         val locationFinePermission = ContextCompat.checkSelfPermission(this@MainActivity,
             Manifest.permission.ACCESS_FINE_LOCATION)
+        val locationBackgroundPermission = ContextCompat.checkSelfPermission(this@MainActivity,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         if (locationCoarsePermission != PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "Permission to access coarse Location denied")
             makeRequestCoarseLocation()
@@ -53,6 +50,12 @@ class MainActivity : AppCompatActivity() {
         }else{
             Log.i(TAG,"Permission to access fine Location Granted")
         }
+        if(locationBackgroundPermission != PackageManager.PERMISSION_GRANTED){
+            Log.i(TAG, "Permission to access background Location denied")
+            makeRequestBackgroundLocation()
+        }else{
+            Log.i(TAG,"Permission to access background Location Granted")
+        }
     }
 
     private fun makeRequestCoarseLocation() {
@@ -60,6 +63,12 @@ class MainActivity : AppCompatActivity() {
         ActivityCompat.requestPermissions(this,
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
             RECORD_REQUEST_CODE)
+    }
+    private fun makeRequestBackgroundLocation() {
+
+        ActivityCompat.requestPermissions(this,
+            arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+            RECORD_REQUEST_CODE_BG)
     }
     private fun makeRequestFineLocation() {
 
@@ -93,6 +102,19 @@ class MainActivity : AppCompatActivity() {
                     }
                 } else {
                     Toast.makeText(this, "Permission Fine Denied", Toast.LENGTH_SHORT).show()
+                }
+                return
+            }
+            3 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED) {
+                    if ((ContextCompat.checkSelfPermission(this@MainActivity,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
+                                PackageManager.PERMISSION_GRANTED)) {
+                        Toast.makeText(this, "Permission Background Granted", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Permission Background Denied", Toast.LENGTH_SHORT).show()
                 }
                 return
             }
