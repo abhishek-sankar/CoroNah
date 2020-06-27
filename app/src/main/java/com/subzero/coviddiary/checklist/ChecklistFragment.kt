@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.subzero.coviddiary.R
 import com.subzero.coviddiary.databinding.FragmentChecklistBinding
 class ChecklistFragment : Fragment() {
@@ -22,6 +24,9 @@ class ChecklistFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val myDatabase = Firebase.database
+        val database = myDatabase.reference
+        database.child("/userList/userId/timestamp/values").setValue("Abhishek")
         val user = FirebaseAuth.getInstance().currentUser
         val binding = DataBindingUtil.inflate<FragmentChecklistBinding>(inflater,
             R.layout.fragment_checklist, container, false)
@@ -32,9 +37,7 @@ class ChecklistFragment : Fragment() {
         binding.spinnerModeOfTransport.setSelection(0,false)
         Log.i("Yes, Im getting this","Above override methods")
         if(user!=null)
-            binding.modeOfTransportTextView.text =
-                "Hey ${(user!!.displayName)?.split("\\s".toRegex())
-                    ?.first()}, how will you be commuting today?"
+            binding.modeOfTransportTextView.text = getString(R.string.add_entry_prompt,(user.displayName)?.split("\\s".toRegex())?.first())
         binding.spinnerModeOfTransport.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 TODO("Did you go to a hotel?")
