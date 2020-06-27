@@ -99,10 +99,10 @@ class LoginFragment : Fragment() {
         val database = FirebaseDatabase.getInstance()
         Log.wtf("HEYYY",user.displayName)
 
-        val myRef = database.getReference("users")
+        val myRef = database.getReference("userList")
         if (user != null) {
-            myRef.child(user.uid).child("name").setValue(user.displayName)
             myRef.child(user.uid).child("mailid").setValue(user.email)
+            myRef.child(user.uid).child("name").setValue(user.displayName)
 
         }
 
