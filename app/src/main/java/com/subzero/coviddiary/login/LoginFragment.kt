@@ -70,7 +70,6 @@ class LoginFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
             Log.i("It works", "Hurray")
@@ -89,7 +88,6 @@ class LoginFragment : Fragment() {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
                 // response.getError().getErrorCode() and handle the error.
-
             }
         }
     }
@@ -103,9 +101,6 @@ class LoginFragment : Fragment() {
             myRef.child(user.uid).setValue("Abhishek")
 //            myRef.child(user.uid).child("userData").child("Name").setValue(user.displayName)
 //            myRef.child(user.uid).child("UserData").child("Email").setValue(user.email)
-
         }
-
     }
-
 }
