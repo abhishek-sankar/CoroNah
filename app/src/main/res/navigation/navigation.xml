@@ -20,7 +20,9 @@
         android:label="AddEntryFragment" >
         <argument
             android:name="modeOfTransport"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
+        <argument android:name="firebaseUId" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"

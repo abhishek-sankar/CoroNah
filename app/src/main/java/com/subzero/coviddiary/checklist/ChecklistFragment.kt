@@ -1,6 +1,8 @@
 package com.subzero.coviddiary.checklist
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +12,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -33,7 +37,7 @@ class ChecklistFragment : Fragment() {
         val arrayAdapter = ArrayAdapter<String>(requireContext(),
             R.layout.spinner_layout_min,viewModel.listOfModesOfTransport)
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
-        viewModel.database.child("/userList/${viewModel.user!!.uid}/timestamps/timestamp/from").setValue("Trivandrum")
+//        viewModel.database.child("/userList/${viewModel.user!!.uid}/timestamps/timestamp/from").setValue("Trivandrum")
         with(binding.spinnerModeOfTransport){
             adapter = arrayAdapter
             setSelection(0,false)
@@ -53,4 +57,5 @@ class ChecklistFragment : Fragment() {
     private fun showToast(context: Context = requireContext(), message: String, duration: Int = Toast.LENGTH_LONG) {
         Toast.makeText(context, message, duration).show()
     }
+
 }
