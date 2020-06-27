@@ -40,16 +40,13 @@ class LoginFragment : Fragment() {
         auth = Firebase.auth
 
         // Inflate the layout for this fragment
-        val binding = DataBindingUtil.inflate<FragmentLoginBinding>(
-            inflater,
-            R.layout.fragment_login, container, false
-        )
+        val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater,
+            R.layout.fragment_login,container,false)
         val providers = arrayListOf(
-            AuthUI.IdpConfig.GoogleBuilder().build()
-        )
+            AuthUI.IdpConfig.GoogleBuilder().build())
         val user = FirebaseAuth.getInstance().currentUser
-        Log.i("In onCreateView", "User deets is " + user)
-//        if (user == null) {
+        Log.i("In onCreateView","User deets is "+user)
+        if (user==null) {
             binding.firebaseLoginButton.setOnClickListener {
                 startActivityForResult(
                     AuthUI.getInstance()
@@ -59,57 +56,52 @@ class LoginFragment : Fragment() {
                     RC_SIGN_IN
                 )
             }
-//        } else {
-//            val navController = findNavController()
-//            navController.navigate(R.id.checklistFragment)
-//        }
+        }else{
+            val navController = findNavController()
+            navController.navigate(R.id.checklistFragment)
+        }
 
 //            Navigation.findNavController(this.requireView()).navigate(R.id.action_loginFragment_to_checklistFragment)
         return binding.root
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == RC_SIGN_IN) {
-            val response = IdpResponse.fromResultIntent(data)
-            Log.i("It works", "Hurray")
-            if (resultCode == Activity.RESULT_OK) {
-                val user = FirebaseAuth.getInstance().currentUser
-                if (response!!.isNewUser()) {
-                    if (user != null) {
-                        addUserToDatabase(user)
-                        Log.i("UserID : " + user.uid, "User Name : " + user.displayName)
-                    }
-                }
-                Navigation.findNavController(this.requireView())
-                    .navigate(R.id.action_loginFragment_to_checklistFragment)
-                // ...
-            } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
+         if (requestCode == RC_SIGN_IN) {
+             val response = IdpResponse.fromResultIntent(data)
+             Log.i("It works", "Hurray")
+             if (resultCode == Activity.RESULT_OK) {
+                 val user = FirebaseAuth.getInstance().currentUser
 
-            }
-        }
-    }
+                 if (response != null) {
+                     if(response.isNewUser()){
+                         if (user != null) {
+                             writeNewUser(user)
+                             Log.wtf(user.uid,user.displayName)
+                         }
+                     }
+                 }
 
-    private fun addUserToDatabase(user: FirebaseUser) {
+                 Navigation.findNavController(this.requireView())
+                     .navigate(R.id.action_loginFragment_to_checklistFragment)
+                 // ...
+             } else {
+                 // Sign in failed. If response is null the user canceled the
+                 // sign-in flow using the back button. Otherwise check
+                 // response.getError().getErrorCode() and handle the error.
+
+             }
+         }
+     }
+    private fun writeNewUser(user: FirebaseUser) {
         val database = FirebaseDatabase.getInstance()
-        Log.i("Inside addUser()", user.displayName)
-
+        Log.wtf("HEYYY",user.displayName)
 
         val myRef = database.getReference("userList")
         if (user != null) {
             myRef.child(user.uid).child("mailid").setValue(user.email)
             myRef.child(user.uid).child("name").setValue(user.displayName)
-
-        val myRef = database.getReference("/userList")
-        if (user != null) {
-            myRef.child(user.uid).setValue("Abhishek")
-//            myRef.child(user.uid).child("userData").child("Name").setValue(user.displayName)
-//            myRef.child(user.uid).child("UserData").child("Email").setValue(user.email)
-
 
         }
 

@@ -7,11 +7,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-<<<<<<< HEAD
-        applicationId "com.subzero.coviddiary4"
-=======
         applicationId "com.subzero.coviddiary"
->>>>>>> 7c9ed1a693b0932d227888dda0b899dffcb87565
         minSdkVersion 24
         targetSdkVersion 29
         versionCode 1
@@ -40,11 +36,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
-<<<<<<< HEAD
     implementation 'com.google.firebase:firebase-auth:19.3.1'
 //    implementation 'com.firebaseui:firebase-ui-auth:6.2.0'
-=======
->>>>>>> 7c9ed1a693b0932d227888dda0b899dffcb87565
+
     implementation 'com.google.firebase:firebase-auth-ktx:19.3.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
