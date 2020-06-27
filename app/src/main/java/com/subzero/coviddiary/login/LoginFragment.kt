@@ -13,16 +13,32 @@ import com.google.firebase.auth.FirebaseAuth
 import com.subzero.coviddiary.databinding.FragmentLoginBinding
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.GoogleAuthProvider
 import com.subzero.coviddiary.R
 
 class LoginFragment : Fragment() {
+    private lateinit var auth: FirebaseAuth
+
     val RC_SIGN_IN = 1
+
     override fun onCreateView(
+
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        auth = Firebase.auth
+
         // Inflate the layout for this fragment
         val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater,
             R.layout.fragment_login,container,false)
@@ -50,23 +66,46 @@ class LoginFragment : Fragment() {
     }
 
      override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == RC_SIGN_IN) {
-            val response = IdpResponse.fromResultIntent(data)
+         if (requestCode == RC_SIGN_IN) {
+             val response = IdpResponse.fromResultIntent(data)
 //            Navigation.findNavController().navigate(R.id.action_loginFragment_to_checklistFragment)
-            Log.i("It works","Hurray")
-            if (resultCode == Activity.RESULT_OK) {
-                // Successfully signed in
-                val user = FirebaseAuth.getInstance().currentUser
-                Navigation.findNavController(this.requireView()).navigate(R.id.action_loginFragment_to_checklistFragment)
-                // ...
-            } else {
-                // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
-            }
+             Log.i("It works", "Hurray")
+             if (resultCode == Activity.RESULT_OK) {
+                 val user = FirebaseAuth.getInstance().currentUser
+
+                 if (response != null) {
+                     if(response.isNewUser()){
+                         if (user != null) {
+                             writeNewUser(user)
+                             Log.wtf(user.uid,user.displayName)
+                         }
+                     }
+                 }
+
+                 Navigation.findNavController(this.requireView())
+                     .navigate(R.id.action_loginFragment_to_checklistFragment)
+                 // ...
+             } else {
+                 // Sign in failed. If response is null the user canceled the
+                 // sign-in flow using the back button. Otherwise check
+                 // response.getError().getErrorCode() and handle the error.
+
+             }
+         }
+     }
+    private fun writeNewUser(user: FirebaseUser) {
+        val database = FirebaseDatabase.getInstance()
+        Log.wtf("HEYYY",user.displayName)
+
+        val myRef = database.getReference("users")
+        if (user != null) {
+            myRef.child(user.uid).child("name").setValue(user.displayName)
+            myRef.child(user.uid).child("mailid").setValue(user.email)
+
         }
+
     }
+
 }
