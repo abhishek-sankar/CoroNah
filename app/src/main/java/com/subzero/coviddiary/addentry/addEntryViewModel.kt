@@ -11,4 +11,7 @@ class addEntryViewModel : ViewModel() {
     init{
         Log.i("Created Viewmodel","AddEntryFragment")
     }
+    fun addCurrentDataToDatabase(){
+
+    }
 }
