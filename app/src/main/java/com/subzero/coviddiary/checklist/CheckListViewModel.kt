@@ -22,7 +22,7 @@ class CheckListViewModel : ViewModel() {
     fun onItemSelectedSpinner(p1: View, p2: Int){
         Log.i("checkListFrag",listOfModesOfTransport[p2])
         modeOfTransport = listOfModesOfTransport[p2].toString()
-        Navigation.findNavController(p1).navigate(ChecklistFragmentDirections.actionChecklistFragmentToAddEntryFragment(modeOfTransport))
+        Navigation.findNavController(p1).navigate(ChecklistFragmentDirections.actionChecklistFragmentToAddEntryFragment(modeOfTransport, user!!.uid))
     }
 
     fun onNothingSelectedSpinner() {

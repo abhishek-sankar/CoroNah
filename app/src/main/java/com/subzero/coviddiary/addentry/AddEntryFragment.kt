@@ -11,9 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
+import com.subzero.coviddiary.LocationBackgroundService.LocationUtils
 import com.subzero.coviddiary.R
 import com.subzero.coviddiary.databinding.FragmentAddEntryBinding
 import java.time.Instant
@@ -26,28 +28,21 @@ class AddEntryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val args = AddEntryFragmentArgs.fromBundle(requireArguments())
         val binding = DataBindingUtil.inflate<FragmentAddEntryBinding>(inflater,
             R.layout.fragment_add_entry, container, false)
         viewModel = ViewModelProviders.of(this).get(addEntryViewModel::class.java)
+        viewModel.args = AddEntryFragmentArgs.fromBundle(requireArguments())
         binding.editTextTextPersonName.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p0: Editable?) {
 //                TODO("Not yet implemented")
             }
-
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 //                TODO("Not yet implemented")
             }
-
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.userInputText = p0.toString()
-                viewModel.timeStamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString()
-                viewModel.modeOfTransport = args.modeOfTransport.toString()
-//                viewModel.userGPS =
-                Log.i("UserInput",viewModel.userInputText)
+                viewModel.onTextChangedEditText(p0, p1, p2, p3)
             }
-
         })
 
         return binding.root
