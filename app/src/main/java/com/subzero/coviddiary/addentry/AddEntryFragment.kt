@@ -20,13 +20,13 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 
 class AddEntryFragment : Fragment() {
-
     private lateinit var viewModel : addEntryViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        val args = AddEntryFragmentArgs.fromBundle(requireArguments())
         val binding = DataBindingUtil.inflate<FragmentAddEntryBinding>(inflater,
             R.layout.fragment_add_entry, container, false)
         viewModel = ViewModelProviders.of(this).get(addEntryViewModel::class.java)
@@ -43,6 +43,7 @@ class AddEntryFragment : Fragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 viewModel.userInputText = p0.toString()
                 viewModel.timeStamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now()).toString()
+                viewModel.modeOfTransport = args.modeOfTransport.toString()
 //                viewModel.userGPS =
                 Log.i("UserInput",viewModel.userInputText)
             }

@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.Navigation
+import com.google.firebase.auth.FirebaseAuth
 import com.subzero.coviddiary.R
 import com.subzero.coviddiary.databinding.FragmentChecklistBinding
 class ChecklistFragment : Fragment() {
@@ -21,6 +22,7 @@ class ChecklistFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val user = FirebaseAuth.getInstance().currentUser
         val binding = DataBindingUtil.inflate<FragmentChecklistBinding>(inflater,
             R.layout.fragment_checklist, container, false)
         val arrayAdapter = ArrayAdapter<String>(requireContext(),
@@ -29,14 +31,18 @@ class ChecklistFragment : Fragment() {
         binding.spinnerModeOfTransport.adapter = arrayAdapter
         binding.spinnerModeOfTransport.setSelection(0,false)
         Log.i("Yes, Im getting this","Above override methods")
+        if(user!=null)
+            binding.modeOfTransportTextView.text =
+                "Hey ${(user!!.displayName)?.split("\\s".toRegex())
+                    ?.first()}, how will you be commuting today?"
         binding.spinnerModeOfTransport.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 TODO("Did you go to a hotel?")
             }
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 Log.i("checkListFrag",listOfModesOfTransport[p2])
-                modeOfTransport = listOfModesOfTransport[p2]
-                Navigation.findNavController(p1!!).navigate(R.id.action_checklistFragment_to_addEntryFragment)
+                modeOfTransport = listOfModesOfTransport[p2].toString()
+                Navigation.findNavController(p1!!).navigate(ChecklistFragmentDirections.actionChecklistFragmentToAddEntryFragment(modeOfTransport))
                 binding.spinnerModeOfTransport.setSelection(0,false)
             }
         }

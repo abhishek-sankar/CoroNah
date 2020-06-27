@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 
 class addEntryViewModel : ViewModel() {
     var userInputText = ""
-    val userGPS = ""
+    var userGPS = ""
     var timeStamp = ""
+    var modeOfTransport = ""
     init{
         Log.i("Created Viewmodel","AddEntryFragment")
     }

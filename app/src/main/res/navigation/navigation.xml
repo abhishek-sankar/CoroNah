@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mavigation"
+    android:id="@+id/navigation"
     app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/checklistFragment"
@@ -17,7 +17,11 @@
         android:id="@+id/addEntryFragment"
         android:name="com.subzero.coviddiary.addentry.AddEntryFragment"
         tools:layout="@layout/fragment_add_entry"
-        android:label="AddEntryFragment" />
+        android:label="AddEntryFragment" >
+        <argument
+            android:name="modeOfTransport"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.subzero.coviddiary.login.LoginFragment"
