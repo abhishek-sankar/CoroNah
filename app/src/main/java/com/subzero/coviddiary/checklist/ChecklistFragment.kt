@@ -28,6 +28,7 @@ class ChecklistFragment : Fragment() {
         val database = myDatabase.reference
         database.child("/userList/userId/timestamp/values").setValue("Abhishek")
         val user = FirebaseAuth.getInstance().currentUser
+        Log.i("CurrentUser : ",user!!.displayName)
         val binding = DataBindingUtil.inflate<FragmentChecklistBinding>(inflater,
             R.layout.fragment_checklist, container, false)
         val arrayAdapter = ArrayAdapter<String>(requireContext(),
