@@ -2,8 +2,10 @@ package com.subzero.coviddiary
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.database.DatabaseUtils
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +15,9 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import com.subzero.coviddiary.LocationBackgroundService.LocationUtils
 import com.subzero.coviddiary.databinding.ActivityMainBinding
 
@@ -21,15 +26,52 @@ class MainActivity : AppCompatActivity() {
     private val RECORD_REQUEST_CODE = 1
     private val RECORD_REQUEST_CODE_FINE = 2
     private val RECORD_REQUEST_CODE_BG = 3
-
-
+    private val REQUEST_CHECK_SETTINGS = 4
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupPermissions()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location : Location? ->
+                // Got last known location. In some rare situations this can be null.
+            }
+        fun createLocationRequest() {
+            val locationRequest = LocationRequest.create()?.apply {
+                interval = 90000
+                fastestInterval = 50000
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+            }
+            val builder = LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest!!)
+            val client: SettingsClient = LocationServices.getSettingsClient(this)
+            val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+            task.addOnSuccessListener { locationSettingsResponse ->
+                // All location settings are satisfied. The client can initialize
+                // location requests here.
+                // ...
+            }
+
+            task.addOnFailureListener { exception ->
+                if (exception is ResolvableApiException){
+                    // Location settings are not satisfied, but this can be fixed
+                    // by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        exception.startResolutionForResult(this@MainActivity,
+                            REQUEST_CHECK_SETTINGS)
+                    } catch (sendEx: IntentSender.SendIntentException) {
+                        // Ignore the error.
+                    }
+                }
+            }
+        }
 
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-
+        TODO("https://developer.android.com/training/location/request-updates")
     }
     private fun setupPermissions() {
         val locationCoarsePermission = ContextCompat.checkSelfPermission(this@MainActivity,
