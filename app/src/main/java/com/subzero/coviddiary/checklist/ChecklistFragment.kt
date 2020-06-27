@@ -33,23 +33,21 @@ class ChecklistFragment : Fragment() {
         val arrayAdapter = ArrayAdapter<String>(requireContext(),
             R.layout.spinner_layout_min,viewModel.listOfModesOfTransport)
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
-        binding.spinnerModeOfTransport.adapter = arrayAdapter
-        binding.spinnerModeOfTransport.setSelection(0,false)
-        Log.i("Yes, Im getting this","Above override methods")
         viewModel.database.child("/userList/${viewModel.user!!.uid}/timestamps/timestamp/from").setValue("Trivandrum")
-        if(viewModel.user!=null)
-            binding.modeOfTransportTextView.text = getString(R.string.add_entry_prompt,(viewModel.user!!.displayName)?.split("\\s".toRegex())?.first())
-        binding.spinnerModeOfTransport.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("Did you go to a hotel?")
-            }
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                Log.i("checkListFrag",viewModel.listOfModesOfTransport[p2])
-                viewModel.modeOfTransport = viewModel.listOfModesOfTransport[p2].toString()
-                Navigation.findNavController(p1!!).navigate(ChecklistFragmentDirections.actionChecklistFragmentToAddEntryFragment(viewModel.modeOfTransport))
-                binding.spinnerModeOfTransport.setSelection(0,false)
+        with(binding.spinnerModeOfTransport){
+            adapter = arrayAdapter
+            setSelection(0,false)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    viewModel.onNothingSelectedSpinner()
+                }
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                    viewModel.onItemSelectedSpinner(p1!!,p2)
+                    binding.spinnerModeOfTransport.setSelection(0,false)
+                }
             }
         }
+        binding.modeOfTransportTextView.text = getString(R.string.add_entry_prompt,(viewModel.user!!.displayName)?.split("\\s".toRegex())?.first())
         return binding.root
     }
     private fun showToast(context: Context = requireContext(), message: String, duration: Int = Toast.LENGTH_LONG) {
