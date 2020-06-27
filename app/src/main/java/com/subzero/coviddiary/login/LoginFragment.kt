@@ -40,16 +40,13 @@ class LoginFragment : Fragment() {
         auth = Firebase.auth
 
         // Inflate the layout for this fragment
-        val binding = DataBindingUtil.inflate<FragmentLoginBinding>(
-            inflater,
-            R.layout.fragment_login, container, false
-        )
+        val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater,
+            R.layout.fragment_login,container,false)
         val providers = arrayListOf(
-            AuthUI.IdpConfig.GoogleBuilder().build()
-        )
+            AuthUI.IdpConfig.GoogleBuilder().build())
         val user = FirebaseAuth.getInstance().currentUser
-        Log.i("In onCreateView", "User deets is " + user)
-//        if (user == null) {
+        Log.i("In onCreateView","User deets is "+user)
+        if (user==null) {
             binding.firebaseLoginButton.setOnClickListener {
                 startActivityForResult(
                     AuthUI.getInstance()
@@ -59,10 +56,10 @@ class LoginFragment : Fragment() {
                     RC_SIGN_IN
                 )
             }
-//        } else {
-//            val navController = findNavController()
-//            navController.navigate(R.id.checklistFragment)
-//        }
+        }else{
+            val navController = findNavController()
+            navController.navigate(R.id.checklistFragment)
+        }
 
 //            Navigation.findNavController(this.requireView()).navigate(R.id.action_loginFragment_to_checklistFragment)
         return binding.root
@@ -92,15 +89,16 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun addUserToDatabase(user: FirebaseUser) {
+    private fun writeNewUser(user: FirebaseUser) {
         val database = FirebaseDatabase.getInstance()
-        Log.i("Inside addUser()", user.displayName)
+        Log.wtf("HEYYY",user.displayName)
 
-        val myRef = database.getReference("/userList")
+        val myRef = database.getReference("userList")
         if (user != null) {
             myRef.child(user.uid).setValue("Abhishek")
 //            myRef.child(user.uid).child("userData").child("Name").setValue(user.displayName)
 //            myRef.child(user.uid).child("UserData").child("Email").setValue(user.email)
+
         }
     }
 }
