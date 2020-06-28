@@ -8,6 +8,7 @@ import android.database.DatabaseUtils
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -23,11 +24,19 @@ import com.subzero.coviddiary.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "PermissionDemo"
+    private val requestingLocationUpdates = true
     private val RECORD_REQUEST_CODE = 1
     private val RECORD_REQUEST_CODE_FINE = 2
     private val RECORD_REQUEST_CODE_BG = 3
     private val REQUEST_CHECK_SETTINGS = 4
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    lateinit var mLocation : Location
+    private lateinit var locationCallback: LocationCallback
+    val locationRequest = LocationRequest.create()?.apply {
+        interval = 100000
+        fastestInterval = 5000
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,14 +45,12 @@ class MainActivity : AppCompatActivity() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
                 // Got last known location. In some rare situations this can be null.
+                if(location!=null)
+                mLocation = location
+                Log.i("Initialising mLocation : ","Latitude : "+mLocation.latitude+" Longitude : "+mLocation.longitude)
             }
-        fun createLocationRequest() {
-            val locationRequest = LocationRequest.create()?.apply {
-                interval = 90000
-                fastestInterval = 50000
-                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//        fun createLocationRequest() {
 
-            }
             val builder = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest!!)
             val client: SettingsClient = LocationServices.getSettingsClient(this)
@@ -68,10 +75,32 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                for (location in locationResult.locations){
+                    // Update UI with location data
+                    // ...
+                    mLocation.latitude = location.latitude
+                    mLocation.longitude = location.longitude
+                    Log.i("In onLocationResult","Latitude : "+location.latitude+" Longitude : "+location.longitude)
+                }
+            }
         }
-
+//        } locationRequestCreate
+        startLocationUpdates()
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        TODO("https://developer.android.com/training/location/request-updates")
+//        TODO("https://developer.android.com/training/location/request-updates")
+    }
+    override fun onResume() {
+        super.onResume()
+//        if (requestingLocationUpdates) startLocationUpdates()
+    }
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+            locationCallback,
+            Looper.getMainLooper())
     }
     private fun setupPermissions() {
         val locationCoarsePermission = ContextCompat.checkSelfPermission(this@MainActivity,
