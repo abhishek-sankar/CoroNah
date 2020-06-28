@@ -44,7 +44,13 @@ class AddEntryFragment : Fragment() {
                 viewModel.onTextChangedEditText(p0, p1, p2, p3)
             }
         })
-
+//        var location = LocationUtils()
+//        location.getInstance(requireContext())
+//        Log.i("LocationUtils : ",location.getInstance(requireContext()).toString())
+//        location.getLocation(requireContext()).observe(viewLifecycleOwner, Observer {
+//            var locationUpdated = it!!
+//            Log.i("In addEntryFrag","Received location "+locationUpdated.latitude+" "+locationUpdated.longitude)
+//        })
         return binding.root
     }
 }

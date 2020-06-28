@@ -15,7 +15,6 @@ class CheckListViewModel : ViewModel() {
     val database = myDatabase.reference
     val user = FirebaseAuth.getInstance().currentUser
 
-
     init{
         Log.i("In OnCreate","Created CheckListViewModel")
     }
