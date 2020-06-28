@@ -13,12 +13,14 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.subzero.coviddiary.DataObjects.LocationViewModel
 import com.subzero.coviddiary.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private val RECORD_REQUEST_CODE_BG = 3
     private val REQUEST_CHECK_SETTINGS = 4
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var ViewModel: LocationViewModel
     lateinit var mLocation : Location
     private lateinit var locationCallback: LocationCallback
     val locationRequest = LocationRequest.create()?.apply {
@@ -41,6 +44,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupPermissions()
+        ViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+        Log.i("ViewModel.allLocations : ",ViewModel.allLocations.toString())
         database = Firebase.database.reference
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.lastLocation
@@ -50,7 +55,6 @@ class MainActivity : AppCompatActivity() {
                 mLocation = location
                 Log.i("Initialising mLocation : ","Latitude : "+mLocation.latitude+" Longitude : "+mLocation.longitude)
             }
-//        fun createLocationRequest() {
 
             val builder = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest!!)
@@ -88,7 +92,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-//        } locationRequestCreate
         startLocationUpdates()
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 //        TODO("https://developer.android.com/training/location/request-updates")

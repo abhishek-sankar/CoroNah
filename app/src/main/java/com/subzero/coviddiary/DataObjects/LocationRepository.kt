@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 
 class LocationRepository(private val locationDataDao: locationDataDao) {
 
-    val allLocations : LiveData<List<FirebaseDataObject>> = locationDataDao.getAllLocationUpdates()
-    suspend fun insert(firebaseDataObject : FirebaseDataObject){
-        locationDataDao.insert(firebaseDataObject)
+    val allLocations : LiveData<List<LocationRecord>> = locationDataDao.getAllLocationUpdates()
+    suspend fun insert(locationRecord: LocationRecord){
+        locationDataDao.insert(locationRecord)
     }
 }
