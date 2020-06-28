@@ -18,5 +18,4 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     fun insert(locationRecord: LocationRecord) = viewModelScope.launch (Dispatchers.IO){
         repository.insert(locationRecord)
     }
-
 }

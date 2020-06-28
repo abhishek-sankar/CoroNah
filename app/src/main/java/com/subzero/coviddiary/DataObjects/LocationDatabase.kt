@@ -26,10 +26,10 @@ public abstract class LocationDatabase : RoomDatabase() {
 
                     //Delete All Content
                     locationDataDao.deleteAllLocationEntries()
-                    var locationData = FirebaseDataObject()
-                    locationData.timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
-                    var LocationRecordVar = LocationRecord(locationData.timestamp, locationData.latitude, locationData.longitude, locationData.uploadedToDatabase)
-                    locationDataDao.insert(LocationRecordVar)
+//                    var locationData = FirebaseDataObject()
+//                    locationData.timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+//                    var LocationRecordVar = LocationRecord(locationData.timestamp, locationData.latitude, locationData.longitude, locationData.uploadedToDatabase)
+//                    locationDataDao.insert(LocationRecordVar)
                 }
 
             }
@@ -49,8 +49,7 @@ public abstract class LocationDatabase : RoomDatabase() {
                     context.applicationContext,
                     LocationDatabase::class.java,
                     "location_database"
-                ).addCallback(locationDatabaseCallback(scope))
-                    .build()
+                ).build()
                 INSTANCE = instance
                 instance
 

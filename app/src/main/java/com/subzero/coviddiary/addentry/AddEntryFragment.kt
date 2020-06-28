@@ -15,7 +15,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
-import com.subzero.coviddiary.LocationBackgroundService.LocationUtils
 import com.subzero.coviddiary.R
 import com.subzero.coviddiary.databinding.FragmentAddEntryBinding
 import java.time.Instant
