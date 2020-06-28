@@ -28,7 +28,7 @@ public abstract class LocationDatabase : RoomDatabase() {
                     locationDataDao.deleteAllLocationEntries()
                     var locationData = FirebaseDataObject()
                     locationData.timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
-                    var LocationRecordVar = LocationRecord(locationData = locationData)
+                    var LocationRecordVar = LocationRecord(locationData.timestamp, locationData.latitude, locationData.longitude, locationData.uploadedToDatabase)
                     locationDataDao.insert(LocationRecordVar)
                 }
 

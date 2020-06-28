@@ -8,7 +8,7 @@ import androidx.room.Query
 
 @Dao
 interface locationDataDao {
-    @Query("SELECT * from location_record_local_table ORDER BY id ASC")
+    @Query("SELECT * from location_record_local_table ORDER BY timestamp ASC")
     fun getAllLocationUpdates() : LiveData<List<LocationRecord>>
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(data : LocationRecord)
