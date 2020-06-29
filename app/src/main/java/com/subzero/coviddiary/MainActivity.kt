@@ -50,12 +50,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setupPermissions()
         ViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
-//        ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
-//            ViewModel.LocationList = it
-//            for (location in it){
-//                Log.i("AllLocations : ","Latitude "+location.latitude+" TimeStamp : "+ location.date+" Month : "+ location.month+" Day : "+location.day+" Timestamp : "+location.timeStamp)
-//            }
-//        })
+        ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
+            ViewModel.LocationList = it
+            for (location in it){
+                Log.i("AllLocations : ","Latitude "+location.latitude+" TimeStamp : "+ location.date+" Month : "+ location.month+" Day : "+location.day+" Timestamp : "+location.timeStamp)
+            }
+        })
         Log.i("ViewModel.allLocations : ",ViewModel.allLocations.toString())
         database = Firebase.database.reference
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-//        startLocationUpdates()
+        startLocationUpdates()
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 //        TODO("https://developer.android.com/training/location/request-updates")
     }
@@ -159,7 +159,6 @@ class MainActivity : AppCompatActivity() {
                             Manifest.permission.ACCESS_COARSE_LOCATION) ==
                                 PackageManager.PERMISSION_GRANTED)) {
                         Toast.makeText(this, "Permission Coarse Granted", Toast.LENGTH_SHORT).show()
-                        startLocationUpdates()
                     }
                 } else {
                     Toast.makeText(this, "Permission Coarse Denied", Toast.LENGTH_SHORT).show()

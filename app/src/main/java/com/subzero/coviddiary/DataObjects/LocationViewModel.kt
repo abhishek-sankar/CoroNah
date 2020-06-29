@@ -8,6 +8,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -36,7 +38,7 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     fun findUniqueDates(LocationList : List<LocationRecord>) {
         Log.i("Inside fundUniqueDates()","LocationViewModel")
         for (location in LocationList){
-            var dateString = (location.month+1)+" "+location.date+" "+location.day
+            var dateString = location.month+" "+location.date+" "+location.day
             if(!uniqueDateList.contains(dateString)){
                 uniqueDateList.add(dateString)
             }
@@ -45,16 +47,17 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
 
     fun findSelectedDateLocationEntries(selectedDay : Int, selectedMonth :Int) {
         mapList.clear()
+        Log.i("Inside findSelectedData","Ensure MapList is cleared : mapList.isEmpty(): "+mapList.isEmpty())
         Log.i("Inside findSelectedData","LocationList :"+LocationList.isEmpty()+" Day/Month"+selectedDay+" "+selectedMonth)
          for (location in LocationList){
             if(location.date == selectedDay.toString() && location.month == selectedMonth.toString()){
                 mapList.add(location)
-                Log.i("InfindSelectedDateLocationEntries","Location : "+location.latitude)
+                Log.i("InfindSelectedDateLocationEntries","Selected Day/Month"+selectedDay+"/"+selectedMonth+" Location : "+location.latitude)
             }
         }
         mapList.sortBy { it.timeStamp }
         mapList = mapList.asReversed()
-        deleteCloseByRecords(mapList)
+//        deleteCloseByRecords(mapList)
 
         _dontStartTillImReady.value = _dontStartTillImReady.value != true
     }

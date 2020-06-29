@@ -25,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import java.util.*
 
@@ -33,6 +34,7 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
     private lateinit var viewModel : LocationViewModel
     var selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
     var selectedDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    lateinit var polyLineFinal : Polyline
     lateinit var binding : FragmentProfileBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,21 +79,33 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
+        var polylineOptions = PolylineOptions()
+        polylineOptions.add(LatLng(8.toDouble(),72.toDouble()))
+        polyLineFinal = googleMap.addPolyline(polylineOptions)
         Log.i("Inside onMapReady","Before findSelectedDateLocationEntries")
         viewModel.findSelectedDateLocationEntries(selectedDay, selectedMonth)
         Log.i("Inside onMapReady","After findSelectedDateLocationEntries")
         viewModel.dontStartTillImReady.observe(viewLifecycleOwner, Observer {
+            polyLineFinal.remove()
+            polylineOptions
             val prevLatitude = 9.999825
             val prevLongitude = 76.30822
             Log.i("Inside onMapReady","Inside Observer dontStartTillImReady")
-            for(item in viewModel.filteredLocationList.indices){
-            var line = googleMap.addPolyline(
-                PolylineOptions().add(LatLng(prevLatitude,prevLongitude),
+            var polylineOptions = PolylineOptions()
+            googleMap.clear()
+            for(item in viewModel.mapList.indices){
+//            var line = googleMap.addPolyline(
+                polylineOptions.add(LatLng(prevLatitude,prevLongitude),
                     LatLng(viewModel.mapList[item].latitude.toDouble(), viewModel.mapList[item].longitude.toDouble()))
-                    .width(10F).color(Color.BLUE).geodesic(true)
-                )
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.filteredLocationList[0].latitude.toDouble(),viewModel.filteredLocationList[0].longitude.toDouble()), 16f))
+
+//                )
             Log.i("InPolylineCreation :",viewModel.mapList[item].latitude)
+                polylineOptions.width(10F).color(Color.BLUE).geodesic(true)
+                polyLineFinal = googleMap.addPolyline(polylineOptions)
+                if(!viewModel.mapList.isEmpty())
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.mapList[0].latitude.toDouble(),viewModel.mapList[0].longitude.toDouble()), 16f))
         }})
+
+
     }
 }
