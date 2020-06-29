@@ -35,22 +35,15 @@
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="60dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginBottom="40dp"
-            android:contentDescription="@string/commute_label"
-            android:fontFamily="@font/poppins_bold"
-            android:padding="16dp"
             android:text="@string/infoText"
-            android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/editTextTextPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            style="@style/textViewStyle" />
 
         <Button
             android:id="@+id/submit_button"

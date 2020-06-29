@@ -11,4 +11,5 @@
     <string name="login_with_google">Hey there!</string>
     <string name="sign_up">Sign Up</string>
     <string name="add_entry_prompt">"Hey %s, how will you be commuting today?"</string>
+    <string name="profile_greeting_text">Hey there, All the best. \nYou do the writing, we do the tracking :)</string>
 </resources>

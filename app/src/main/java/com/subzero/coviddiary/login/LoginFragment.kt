@@ -58,10 +58,8 @@ class LoginFragment : Fragment() {
             }
         }else{
             val navController = findNavController()
-            navController.navigate(R.id.checklistFragment)
+            navController.navigate(R.id.profileFragment)
         }
-
-//            Navigation.findNavController(this.requireView()).navigate(R.id.action_loginFragment_to_checklistFragment)
         return binding.root
     }
 
@@ -71,15 +69,8 @@ class LoginFragment : Fragment() {
             val response = IdpResponse.fromResultIntent(data)
             Log.i("It works", "Hurray")
             if (resultCode == Activity.RESULT_OK) {
-//                val user = FirebaseAuth.getInstance().currentUser
-//                if (response!!.isNewUser()) {
-//                    if (user != null) {
-//                        addUserToDatabase(user)
-//                        Log.i("UserID : " + user.uid, "User Name : " + user.displayName)
-//                    }
-//                }
                 Navigation.findNavController(this.requireView())
-                    .navigate(R.id.action_loginFragment_to_checklistFragment)
+                    .navigate(R.id.action_loginFragment_to_profileFragment)
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the
@@ -89,16 +80,16 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun writeNewUser(user: FirebaseUser) {
-        val database = FirebaseDatabase.getInstance()
-        Log.wtf("HEYYY",user.displayName)
-
-        val myRef = database.getReference("userList")
-        if (user != null) {
-            myRef.child(user.uid).setValue("Abhishek")
-//            myRef.child(user.uid).child("userData").child("Name").setValue(user.displayName)
-//            myRef.child(user.uid).child("UserData").child("Email").setValue(user.email)
-
-        }
-    }
+//    private fun writeNewUser(user: FirebaseUser) {
+//        val database = FirebaseDatabase.getInstance()
+//        Log.wtf("HEYYY",user.displayName)
+//
+//        val myRef = database.getReference("userList")
+//        if (user != null) {
+//            myRef.child(user.uid).setValue("Abhishek")
+////            myRef.child(user.uid).child("userData").child("Name").setValue(user.displayName)
+////            myRef.child(user.uid).child("UserData").child("Email").setValue(user.email)
+//
+//        }
+//    }
 }

@@ -13,13 +13,20 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.subzero.coviddiary.DataObjects.LocationRecord
+import com.subzero.coviddiary.DataObjects.LocationViewModel
 import com.subzero.coviddiary.databinding.ActivityMainBinding
+import java.sql.Timestamp
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "PermissionDemo"
@@ -29,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private val RECORD_REQUEST_CODE_BG = 3
     private val REQUEST_CHECK_SETTINGS = 4
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var ViewModel: LocationViewModel
     lateinit var mLocation : Location
     private lateinit var locationCallback: LocationCallback
     val locationRequest = LocationRequest.create()?.apply {
@@ -41,16 +49,24 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupPermissions()
+        ViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+//        ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
+//            ViewModel.LocationList = it
+//            for (location in it){
+//                Log.i("AllLocations : ","Latitude "+location.latitude+" TimeStamp : "+ location.date+" Month : "+ location.month+" Day : "+location.day+" Timestamp : "+location.timeStamp)
+//            }
+//        })
+        Log.i("ViewModel.allLocations : ",ViewModel.allLocations.toString())
         database = Firebase.database.reference
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
                 // Got last known location. In some rare situations this can be null.
                 if(location!=null)
-                mLocation = location
+                {mLocation = location
+                ViewModel.mLocation = location}
                 Log.i("Initialising mLocation : ","Latitude : "+mLocation.latitude+" Longitude : "+mLocation.longitude)
             }
-//        fun createLocationRequest() {
 
             val builder = LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest!!)
@@ -85,11 +101,14 @@ class MainActivity : AppCompatActivity() {
                     mLocation.latitude = location.latitude
                     mLocation.longitude = location.longitude
                     Log.i("In onLocationResult","Latitude : "+location.latitude+" Longitude : "+location.longitude)
+                    var date =  Calendar.getInstance()
+                    var locationRecordNew = LocationRecord(
+                        (System.currentTimeMillis()),location.latitude.toString(), location.longitude.toString(),date.get(Calendar.MONTH).toString(),date.get(Calendar.DAY_OF_MONTH).toString(),date.get(Calendar.DAY_OF_WEEK).toString(),false)
+                    ViewModel.insert(locationRecordNew)
                 }
             }
         }
-//        } locationRequestCreate
-        startLocationUpdates()
+//        startLocationUpdates()
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 //        TODO("https://developer.android.com/training/location/request-updates")
     }
@@ -110,44 +129,26 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_FINE_LOCATION)
         val locationBackgroundPermission = ContextCompat.checkSelfPermission(this@MainActivity,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        if (locationCoarsePermission != PackageManager.PERMISSION_GRANTED) {
-            Log.i(TAG, "Permission to access coarse Location denied")
-            makeRequestCoarseLocation()
-        }else{
-            Log.i(TAG,"Permission to access coarse Location Granted")
-        }
-        if(locationFinePermission != PackageManager.PERMISSION_GRANTED){
-            Log.i(TAG, "Permission to access fine Location denied")
-            makeRequestCoarseLocation()
-        }else{
-            Log.i(TAG,"Permission to access fine Location Granted")
+        var mIndex: Int = -1
+        var requestList: Array<String> = Array(10, { "" } )
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            mIndex ++
+            requestList[mIndex] = Manifest.permission.ACCESS_FINE_LOCATION
         }
         if(locationBackgroundPermission != PackageManager.PERMISSION_GRANTED){
             Log.i(TAG, "Permission to access background Location denied")
-            makeRequestBackgroundLocation()
+            mIndex++
+            requestList[mIndex] = Manifest.permission.ACCESS_BACKGROUND_LOCATION
         }else{
             Log.i(TAG,"Permission to access background Location Granted")
         }
+        if(mIndex!=-1){
+            ActivityCompat.requestPermissions(this, requestList, RECORD_REQUEST_CODE)
+        }
     }
 
-    private fun makeRequestCoarseLocation() {
 
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            RECORD_REQUEST_CODE)
-    }
-    private fun makeRequestBackgroundLocation() {
-
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-            RECORD_REQUEST_CODE_BG)
-    }
-    private fun makeRequestFineLocation() {
-
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            RECORD_REQUEST_CODE_FINE)
-    }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         when (requestCode) {
@@ -158,6 +159,7 @@ class MainActivity : AppCompatActivity() {
                             Manifest.permission.ACCESS_COARSE_LOCATION) ==
                                 PackageManager.PERMISSION_GRANTED)) {
                         Toast.makeText(this, "Permission Coarse Granted", Toast.LENGTH_SHORT).show()
+                        startLocationUpdates()
                     }
                 } else {
                     Toast.makeText(this, "Permission Coarse Denied", Toast.LENGTH_SHORT).show()
