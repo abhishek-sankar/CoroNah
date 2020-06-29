@@ -32,5 +32,13 @@
         <action
             android:id="@+id/action_loginFragment_to_checklistFragment"
             app:destination="@id/checklistFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.subzero.coviddiary.profile.ProfileFragment"
+        tools:layout="@layout/fragment_profile"
+        android:label="ProfileFragment" />
 </navigation>

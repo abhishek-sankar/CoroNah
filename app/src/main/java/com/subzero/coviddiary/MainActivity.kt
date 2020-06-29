@@ -50,19 +50,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setupPermissions()
         ViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
-//        ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
-//            for (location in it){
-//                Log.i("AllLocations : ","Latitude "+location.latitude+" TimeStamp : "+ location.timeStamp)
-//            }
-//        })
-//        Log.i("ViewModel.allLocations : ",ViewModel.allLocations.toString())
+        ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
+            for (location in it){
+                Log.i("AllLocations : ","Latitude "+location.latitude+" TimeStamp : "+ location.date+" Month : "+ location.month+" Day : "+location.day+" Timestamp : "+location.timeStamp)
+            }
+        })
+        Log.i("ViewModel.allLocations : ",ViewModel.allLocations.toString())
         database = Firebase.database.reference
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location : Location? ->
                 // Got last known location. In some rare situations this can be null.
                 if(location!=null)
-                mLocation = location
+                {mLocation = location
+                ViewModel.mLocation = location}
                 Log.i("Initialising mLocation : ","Latitude : "+mLocation.latitude+" Longitude : "+mLocation.longitude)
             }
 
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                     Log.i("In onLocationResult","Latitude : "+location.latitude+" Longitude : "+location.longitude)
                     var date =  Calendar.getInstance()
                     var locationRecordNew = LocationRecord(
-                        date.toString(),location.latitude.toString(), location.longitude.toString(),date.get(Calendar.MONTH).toString(),date.get(Calendar.DAY_OF_MONTH).toString(),date.get(Calendar.DAY_OF_WEEK).toString(),false)
+                        (System.currentTimeMillis()),location.latitude.toString(), location.longitude.toString(),date.get(Calendar.MONTH).toString(),date.get(Calendar.DAY_OF_MONTH).toString(),date.get(Calendar.DAY_OF_WEEK).toString(),false)
                     ViewModel.insert(locationRecordNew)
                 }
             }
@@ -138,7 +139,6 @@ class MainActivity : AppCompatActivity() {
             Log.i(TAG, "Permission to access background Location denied")
             mIndex++
             requestList[mIndex] = Manifest.permission.ACCESS_BACKGROUND_LOCATION
-//            makeRequestBackgroundLocation()
         }else{
             Log.i(TAG,"Permission to access background Location Granted")
         }
@@ -147,24 +147,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun makeRequestCoarseLocation() {
 
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            RECORD_REQUEST_CODE)
-    }
-    private fun makeRequestBackgroundLocation() {
-
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
-            RECORD_REQUEST_CODE_BG)
-    }
-    private fun makeRequestFineLocation() {
-
-        ActivityCompat.requestPermissions(this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            RECORD_REQUEST_CODE_FINE)
-    }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         when (requestCode) {

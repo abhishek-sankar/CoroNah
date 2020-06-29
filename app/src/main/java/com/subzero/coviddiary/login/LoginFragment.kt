@@ -58,7 +58,7 @@ class LoginFragment : Fragment() {
             }
         }else{
             val navController = findNavController()
-            navController.navigate(R.id.checklistFragment)
+            navController.navigate(R.id.profileFragment)
         }
 
 //            Navigation.findNavController(this.requireView()).navigate(R.id.action_loginFragment_to_checklistFragment)
@@ -79,7 +79,7 @@ class LoginFragment : Fragment() {
 //                    }
 //                }
                 Navigation.findNavController(this.requireView())
-                    .navigate(R.id.action_loginFragment_to_checklistFragment)
+                    .navigate(R.id.action_loginFragment_to_profileFragment)
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the

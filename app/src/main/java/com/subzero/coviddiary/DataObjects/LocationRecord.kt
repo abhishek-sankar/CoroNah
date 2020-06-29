@@ -8,7 +8,7 @@ import java.util.*
 
 @Entity(tableName = "location_record_local_table")
 class LocationRecord(
-    @PrimaryKey @ColumnInfo(name="timestamp") val timeStamp : String,
+    @PrimaryKey @ColumnInfo(name="timestamp") val timeStamp : Long,
     @ColumnInfo(name="latitude") val latitude : String,
     @ColumnInfo(name="longitude") val longitude : String,
     @ColumnInfo(name="month")val month :String,
