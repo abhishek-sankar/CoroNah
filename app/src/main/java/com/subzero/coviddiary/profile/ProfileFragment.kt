@@ -42,7 +42,6 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
         var maxDate : LocationRecord?
         var minDate : LocationRecord?
 
-        binding = DataBindingUtil.inflate<FragmentProfileBinding>(inflater, R.layout.fragment_profile, container, false)
         viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         viewModel.allLocations.observe(viewLifecycleOwner, Observer {
             viewModel.LocationList = it
@@ -54,13 +53,14 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
                 it.timeStamp
             }
             Log.i("Min date :"+minDate?.timeStamp,"Max date : "+maxDate?.timeStamp)
-            if(minDate!=null && maxDate!=null) {
-//            binding.calendarView.maxDate = maxDate!!.timeStamp.toLong()
-            binding.calendarView.minDate = minDate!!.timeStamp.toLong()
-            }
+//            if(minDate!=null && maxDate!=null) {
+////            binding.calendarView.maxDate = maxDate!!.timeStamp.toLong()
+//                binding.calendarView.minDate = minDate!!.timeStamp.toLong()
+//            }
         })
-
         val user = FirebaseAuth.getInstance().currentUser
+        binding = DataBindingUtil.inflate<FragmentProfileBinding>(inflater, R.layout.fragment_profile, container, false)
+
         binding.calendarView.setOnDateChangeListener { calendarView, i, i2, i3 ->
             Log.i("OnDateChange","Strings are : "+i+" "+i2+" "+i3)
             selectedDay = i3
@@ -85,9 +85,9 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
             var line = googleMap.addPolyline(
                 PolylineOptions().add(LatLng(prevLatitude,prevLongitude),
                     LatLng(viewModel.mapList[item].latitude.toDouble(), viewModel.mapList[item].longitude.toDouble()))
-                    .width(2F).color(Color.BLUE).geodesic(true)
+                    .width(10F).color(Color.BLUE).geodesic(true)
                 )
-
+            Log.i("InPolylineCreation :",viewModel.mapList[item].latitude)
         }})
     }
 }

@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        startLocationUpdates()
+//        startLocationUpdates()
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 //        TODO("https://developer.android.com/training/location/request-updates")
     }
@@ -158,6 +158,7 @@ class MainActivity : AppCompatActivity() {
                             Manifest.permission.ACCESS_COARSE_LOCATION) ==
                                 PackageManager.PERMISSION_GRANTED)) {
                         Toast.makeText(this, "Permission Coarse Granted", Toast.LENGTH_SHORT).show()
+                        startLocationUpdates()
                     }
                 } else {
                     Toast.makeText(this, "Permission Coarse Denied", Toast.LENGTH_SHORT).show()

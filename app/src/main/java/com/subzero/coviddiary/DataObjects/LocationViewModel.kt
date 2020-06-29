@@ -46,7 +46,7 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
          for (location in LocationList){
             if(location.date == selectedDay.toString() && location.month == selectedMonth.toString()){
                 mapList.add(location)
-                Log.i("InfindSelectedDateLocationEntries","Location : "+location.timeStamp)
+                Log.i("InfindSelectedDateLocationEntries","Location : "+location.latitude)
             }
         }
         mapList.sortBy { it.timeStamp }
