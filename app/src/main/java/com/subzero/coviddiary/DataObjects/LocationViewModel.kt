@@ -17,7 +17,7 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     val dontStartTillImReady : LiveData<Boolean>
     get() = _dontStartTillImReady
     lateinit var mLocation : Location
-    var LocationList : List<LocationRecord> = emptyList()
+    lateinit var LocationList : List<LocationRecord>
     var filteredLocationList : MutableList<LocationRecord> = ArrayList<LocationRecord>()
     var mapList : MutableList<LocationRecord> = ArrayList<LocationRecord>()
     var uniqueDateList : MutableList<String> =  ArrayList<String>()
@@ -27,12 +27,14 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
         repository = LocationRepository(locationDataDao)
         allLocations = repository.allLocations
         _dontStartTillImReady.value = false
+        LocationList = emptyList()
     }
     fun insert(locationRecord: LocationRecord) = viewModelScope.launch (Dispatchers.IO){
         repository.insert(locationRecord)
     }
 
     fun findUniqueDates(LocationList : List<LocationRecord>) {
+        Log.i("Inside fundUniqueDates()","LocationViewModel")
         for (location in LocationList){
             var dateString = (location.month+1)+" "+location.date+" "+location.day
             if(!uniqueDateList.contains(dateString)){
@@ -43,6 +45,7 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
 
     fun findSelectedDateLocationEntries(selectedDay : Int, selectedMonth :Int) {
         mapList.clear()
+        Log.i("Inside findSelectedData","LocationList :"+LocationList.isEmpty()+" Day/Month"+selectedDay+" "+selectedMonth)
          for (location in LocationList){
             if(location.date == selectedDay.toString() && location.month == selectedMonth.toString()){
                 mapList.add(location)
@@ -51,9 +54,12 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
         }
         mapList.sortBy { it.timeStamp }
         mapList = mapList.asReversed()
-        _dontStartTillImReady.value = true
+        deleteCloseByRecords(mapList)
+
+        _dontStartTillImReady.value = _dontStartTillImReady.value != true
     }
     fun deleteCloseByRecords(mapList : MutableList<LocationRecord>){
+        Log.i("Inside deleteCloseByRecords","LocationViewModel")
         var prevLatitude : Double = 0.0
         var prevLongitude : Double = 0.0
         for(location in mapList){

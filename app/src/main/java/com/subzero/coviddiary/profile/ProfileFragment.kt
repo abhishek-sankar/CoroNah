@@ -31,8 +31,8 @@ import java.util.*
 
 class ProfileFragment : Fragment(), OnMapReadyCallback {
     private lateinit var viewModel : LocationViewModel
-    var selectedMonth = Calendar.MONTH
-    var selectedDay = Calendar.DAY_OF_MONTH
+    var selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
+    var selectedDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
     lateinit var binding : FragmentProfileBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +41,7 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
         // Inflate the layout for this fragment
         var maxDate : LocationRecord?
         var minDate : LocationRecord?
-
+        Log.i("Inside ProfileFragment.onCreateView()","Selected Date : "+selectedDay+ " Selected month : "+selectedMonth)
         viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         viewModel.allLocations.observe(viewLifecycleOwner, Observer {
             viewModel.LocationList = it
@@ -53,10 +53,10 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
                 it.timeStamp
             }
             Log.i("Min date :"+minDate?.timeStamp,"Max date : "+maxDate?.timeStamp)
-//            if(minDate!=null && maxDate!=null) {
-////            binding.calendarView.maxDate = maxDate!!.timeStamp.toLong()
-//                binding.calendarView.minDate = minDate!!.timeStamp.toLong()
-//            }
+            if(minDate!=null && maxDate!=null) {
+                binding.calendarView.maxDate = maxDate!!.timeStamp.toLong()
+                binding.calendarView.minDate = minDate!!.timeStamp.toLong()
+            }
         })
         val user = FirebaseAuth.getInstance().currentUser
         binding = DataBindingUtil.inflate<FragmentProfileBinding>(inflater, R.layout.fragment_profile, container, false)
@@ -77,16 +77,20 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
+        Log.i("Inside onMapReady","Before findSelectedDateLocationEntries")
         viewModel.findSelectedDateLocationEntries(selectedDay, selectedMonth)
+        Log.i("Inside onMapReady","After findSelectedDateLocationEntries")
         viewModel.dontStartTillImReady.observe(viewLifecycleOwner, Observer {
             val prevLatitude = 9.999825
             val prevLongitude = 76.30822
-            for(item in viewModel.mapList.indices){
+            Log.i("Inside onMapReady","Inside Observer dontStartTillImReady")
+            for(item in viewModel.filteredLocationList.indices){
             var line = googleMap.addPolyline(
                 PolylineOptions().add(LatLng(prevLatitude,prevLongitude),
                     LatLng(viewModel.mapList[item].latitude.toDouble(), viewModel.mapList[item].longitude.toDouble()))
                     .width(10F).color(Color.BLUE).geodesic(true)
                 )
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.filteredLocationList[0].latitude.toDouble(),viewModel.filteredLocationList[0].longitude.toDouble()), 16f))
             Log.i("InPolylineCreation :",viewModel.mapList[item].latitude)
         }})
     }
