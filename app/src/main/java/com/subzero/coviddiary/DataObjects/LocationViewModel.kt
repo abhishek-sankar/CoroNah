@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LocationViewModel(application: Application) : AndroidViewModel(application) {
@@ -45,10 +46,11 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun findSelectedDateLocationEntries(selectedDay : Int, selectedMonth :Int) {
+     fun findSelectedDateLocationEntries(selectedDay : Int, selectedMonth :Int) {
         mapList.clear()
         Log.i("Inside findSelectedData","Ensure MapList is cleared : mapList.isEmpty(): "+mapList.isEmpty())
         Log.i("Inside findSelectedData","LocationList :"+LocationList.isEmpty()+" Day/Month"+selectedDay+" "+selectedMonth)
+
          for (location in LocationList){
             if(location.date == selectedDay.toString() && location.month == selectedMonth.toString()){
                 mapList.add(location)
@@ -57,6 +59,7 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
         }
         mapList.sortBy { it.timeStamp }
         mapList = mapList.asReversed()
+//        if(mapList.size>20)
 //        deleteCloseByRecords(mapList)
 
         _dontStartTillImReady.value = _dontStartTillImReady.value != true
@@ -72,5 +75,6 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
             prevLatitude = location.latitude.toDouble()
             prevLongitude = location.longitude.toDouble()
         }
+        this.mapList = filteredLocationList
     }
 }

@@ -46,7 +46,10 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
         Log.i("Inside ProfileFragment.onCreateView()","Selected Date : "+selectedDay+ " Selected month : "+selectedMonth)
         viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         viewModel.allLocations.observe(viewLifecycleOwner, Observer {
+            Log.i("LocationList Observer","Fired, it.isEmpty()"+it.isEmpty().toString())
             viewModel.LocationList = it
+            viewModel.findSelectedDateLocationEntries(selectedDay,selectedMonth)
+            viewModel._dontStartTillImReady.value = viewModel._dontStartTillImReady.value != true
             viewModel.findUniqueDates(viewModel.LocationList)
              maxDate  = viewModel.LocationList.maxBy {
                 it.timeStamp
@@ -86,21 +89,21 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
         viewModel.findSelectedDateLocationEntries(selectedDay, selectedMonth)
         Log.i("Inside onMapReady","After findSelectedDateLocationEntries")
         viewModel.dontStartTillImReady.observe(viewLifecycleOwner, Observer {
-            polyLineFinal.remove()
-            polylineOptions
-            val prevLatitude = 9.999825
-            val prevLongitude = 76.30822
+            var prevLatitude = 9.9991589
+            var prevLongitude = 76.3084481
             Log.i("Inside onMapReady","Inside Observer dontStartTillImReady")
+            Log.i("onMapReady : mapList.size()",viewModel.mapList.size.toString())
             var polylineOptions = PolylineOptions()
             googleMap.clear()
             for(item in viewModel.mapList.indices){
 //            var line = googleMap.addPolyline(
                 polylineOptions.add(LatLng(prevLatitude,prevLongitude),
                     LatLng(viewModel.mapList[item].latitude.toDouble(), viewModel.mapList[item].longitude.toDouble()))
-
+                prevLatitude = viewModel.mapList[item].latitude.toDouble()
+                prevLongitude = viewModel.mapList[item].longitude.toDouble()
 //                )
             Log.i("InPolylineCreation :",viewModel.mapList[item].latitude)
-                polylineOptions.width(10F).color(Color.BLUE).geodesic(true)
+                polylineOptions.width(4F).color(Color.BLUE).geodesic(true)
                 polyLineFinal = googleMap.addPolyline(polylineOptions)
                 if(!viewModel.mapList.isEmpty())
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.mapList[0].latitude.toDouble(),viewModel.mapList[0].longitude.toDouble()), 16f))

@@ -52,9 +52,10 @@ class MainActivity : AppCompatActivity() {
         ViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
             ViewModel.LocationList = it
-            for (location in it){
-                Log.i("AllLocations : ","Latitude "+location.latitude+" TimeStamp : "+ location.date+" Month : "+ location.month+" Day : "+location.day+" Timestamp : "+location.timeStamp)
-            }
+            Log.i("MainActivityLocationObserver : it.size(): ",it.size.toString())
+//            for (location in it){
+//                Log.i("AllLocations : ","Latitude "+location.latitude+" TimeStamp : "+ location.date+" Month : "+ location.month+" Day : "+location.day+" Timestamp : "+location.timeStamp)
+//            }
         })
         Log.i("ViewModel.allLocations : ",ViewModel.allLocations.toString())
         database = Firebase.database.reference
