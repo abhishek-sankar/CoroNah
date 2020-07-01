@@ -89,6 +89,7 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
         viewModel.findSelectedDateLocationEntries(selectedDay, selectedMonth)
         Log.i("Inside onMapReady","After findSelectedDateLocationEntries")
         viewModel.dontStartTillImReady.observe(viewLifecycleOwner, Observer {
+
             var prevLatitude = 9.9991589
             var prevLongitude = 76.3084481
             Log.i("Inside onMapReady","Inside Observer dontStartTillImReady")
@@ -105,9 +106,11 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
             Log.i("InPolylineCreation :",viewModel.mapList[item].latitude)
                 polylineOptions.width(4F).color(Color.BLUE).geodesic(true)
                 polyLineFinal = googleMap.addPolyline(polylineOptions)
-                if(!viewModel.mapList.isEmpty())
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.mapList[0].latitude.toDouble(),viewModel.mapList[0].longitude.toDouble()), 16f))
-        }})
+
+        }
+            if(!viewModel.mapList.isEmpty())
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.mapList[0].latitude.toDouble(),viewModel.mapList[0].longitude.toDouble()), 10f))
+        })
 
 
     }
