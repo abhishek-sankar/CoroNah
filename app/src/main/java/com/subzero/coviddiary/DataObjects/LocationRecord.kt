@@ -14,5 +14,7 @@ class LocationRecord(
     @ColumnInfo(name="month")val month :String,
     @ColumnInfo(name="date")val date : String,
     @ColumnInfo(name="day")val day :String,
-    @ColumnInfo(name="uploadedToFirebaseDatabase") val uploadedToFirebaseDatabase : Boolean
+    @ColumnInfo(name="uploadedToFirebaseDatabase") val uploadedToFirebaseDatabase : Boolean,
+    @ColumnInfo(name="accuracy")val accuracy : String,
+    @ColumnInfo(name="isMock")val isMock : Boolean
 )
