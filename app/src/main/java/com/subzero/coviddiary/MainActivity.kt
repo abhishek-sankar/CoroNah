@@ -30,10 +30,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "PermissionDemo"
+    val ActivityTag = "Activity-MainActivity"
     private val requestingLocationUpdates = true
     private val RECORD_REQUEST_CODE = 1
-    private val RECORD_REQUEST_CODE_FINE = 2
-    private val RECORD_REQUEST_CODE_BG = 3
     private val REQUEST_CHECK_SETTINGS = 4
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var ViewModel: LocationViewModel
@@ -50,13 +49,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setupPermissions()
         ViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
-//        ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
-//            ViewModel.LocationList = it
+        ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
+            ViewModel.LocationList = it
+            Log.i(ActivityTag,"LocationObserver : it.size():"+ it.size.toString())
 //            for (location in it){
 //                Log.i("AllLocations : ","Latitude "+location.latitude+" TimeStamp : "+ location.date+" Month : "+ location.month+" Day : "+location.day+" Timestamp : "+location.timeStamp)
 //            }
-//        })
-        Log.i("ViewModel.allLocations : ",ViewModel.allLocations.toString())
+        })
+        Log.i(ActivityTag,"ViewModel.allLocations : "+ViewModel.allLocations.toString())
         database = Firebase.database.reference
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationClient.lastLocation
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                 if(location!=null)
                 {mLocation = location
                 ViewModel.mLocation = location}
-                Log.i("Initialising mLocation : ","Latitude : "+mLocation.latitude+" Longitude : "+mLocation.longitude)
+                Log.i(ActivityTag," Initialising mLocation => Latitude : "+mLocation.latitude+" Longitude : "+mLocation.longitude)
             }
 
             val builder = LocationSettingsRequest.Builder()
@@ -100,15 +100,17 @@ class MainActivity : AppCompatActivity() {
                     // ...
                     mLocation.latitude = location.latitude
                     mLocation.longitude = location.longitude
-                    Log.i("In onLocationResult","Latitude : "+location.latitude+" Longitude : "+location.longitude)
+                    Log.i(ActivityTag,"In onLocationResult Latitude : "+location.latitude+" Longitude : "+location.longitude)
                     var date =  Calendar.getInstance()
+
                     var locationRecordNew = LocationRecord(
-                        (System.currentTimeMillis()),location.latitude.toString(), location.longitude.toString(),date.get(Calendar.MONTH).toString(),date.get(Calendar.DAY_OF_MONTH).toString(),date.get(Calendar.DAY_OF_WEEK).toString(),false)
+                        (location.time),location.latitude.toString(), location.longitude.toString(),date.get(Calendar.MONTH).toString(),date.get(Calendar.DAY_OF_MONTH).toString(),date.get(Calendar.DAY_OF_WEEK).toString(),false,location.accuracy.toString(),location.isFromMockProvider)
+                        Log.i(ActivityTag, "Accuracy : "+location.accuracy+ " IsMock : "+location.isFromMockProvider)
                     ViewModel.insert(locationRecordNew)
                 }
             }
         }
-//        startLocationUpdates()
+        startLocationUpdates()
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 //        TODO("https://developer.android.com/training/location/request-updates")
     }
@@ -137,11 +139,11 @@ class MainActivity : AppCompatActivity() {
             requestList[mIndex] = Manifest.permission.ACCESS_FINE_LOCATION
         }
         if(locationBackgroundPermission != PackageManager.PERMISSION_GRANTED){
-            Log.i(TAG, "Permission to access background Location denied")
+            Log.i(ActivityTag, "Permission to access background Location denied")
             mIndex++
             requestList[mIndex] = Manifest.permission.ACCESS_BACKGROUND_LOCATION
         }else{
-            Log.i(TAG,"Permission to access background Location Granted")
+            Log.i(ActivityTag,"Permission to access background Location Granted")
         }
         if(mIndex!=-1){
             ActivityCompat.requestPermissions(this, requestList, RECORD_REQUEST_CODE)
@@ -159,36 +161,9 @@ class MainActivity : AppCompatActivity() {
                             Manifest.permission.ACCESS_COARSE_LOCATION) ==
                                 PackageManager.PERMISSION_GRANTED)) {
                         Toast.makeText(this, "Permission Coarse Granted", Toast.LENGTH_SHORT).show()
-                        startLocationUpdates()
                     }
                 } else {
                     Toast.makeText(this, "Permission Coarse Denied", Toast.LENGTH_SHORT).show()
-                }
-                return
-            }
-            2 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] ==
-                    PackageManager.PERMISSION_GRANTED) {
-                    if ((ContextCompat.checkSelfPermission(this@MainActivity,
-                            Manifest.permission.ACCESS_FINE_LOCATION) ==
-                                PackageManager.PERMISSION_GRANTED)) {
-                        Toast.makeText(this, "Permission Fine Granted", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this, "Permission Fine Denied", Toast.LENGTH_SHORT).show()
-                }
-                return
-            }
-            3 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] ==
-                    PackageManager.PERMISSION_GRANTED) {
-                    if ((ContextCompat.checkSelfPermission(this@MainActivity,
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
-                                PackageManager.PERMISSION_GRANTED)) {
-                        Toast.makeText(this, "Permission Background Granted", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(this, "Permission Background Denied", Toast.LENGTH_SHORT).show()
                 }
                 return
             }

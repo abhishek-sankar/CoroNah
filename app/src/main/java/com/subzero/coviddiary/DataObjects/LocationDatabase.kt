@@ -6,13 +6,14 @@ import androidx.annotation.RequiresApi
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
-@Database(entities = arrayOf(LocationRecord::class), version = 1, exportSchema = false)
+@Database(entities = arrayOf(LocationRecord::class), version = 2, exportSchema = false)
 public abstract class LocationDatabase : RoomDatabase() {
     abstract fun locationDataDao(): locationDataDao
 
@@ -35,10 +36,16 @@ public abstract class LocationDatabase : RoomDatabase() {
             }
         }
     }
+
     companion object{
+        val MIGRATION_1_2 = object : Migration(1,2){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE location_record_local_table ADD COLUMN accuracy TEXT NOT NULL DEFAULT 'null'")
+                database.execSQL("ALTER TABLE location_record_local_table ADD COLUMN isMock INTEGER NOT NULL DEFAULT 'null'")
+            }
+        }
         @Volatile
         private var INSTANCE : LocationDatabase?=null
-
         fun getDatabase(context: Context, scope: CoroutineScope): LocationDatabase{
             val tempInstance = INSTANCE
             if(tempInstance!=null){
@@ -49,7 +56,8 @@ public abstract class LocationDatabase : RoomDatabase() {
                     context.applicationContext,
                     LocationDatabase::class.java,
                     "location_database"
-                ).build()
+                ).addMigrations(MIGRATION_1_2)
+                    .build()
                 INSTANCE = instance
                 instance
 
