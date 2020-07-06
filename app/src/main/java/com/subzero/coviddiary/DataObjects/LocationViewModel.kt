@@ -1,26 +1,41 @@
 package com.subzero.coviddiary.DataObjects
 
+import android.Manifest
+import android.app.Activity
 import android.app.Application
+import android.content.Context
+import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.LocaleList
+import android.os.Looper
+import android.provider.SyncStateContract.Helpers.insert
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.*
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.tasks.Task
+import com.subzero.coviddiary.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
 
 class LocationViewModel(application: Application) : AndroidViewModel(application) {
     private val repository : LocationRepository
     val ActivityTag = "Activity-LocationViewModel"
-
+    lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val RECORD_REQUEST_CODE = 1
+    lateinit var locationCallback: LocationCallback
     val _dontStartTillImReady = MutableLiveData<Boolean>()
     val dontStartTillImReady : LiveData<Boolean>
     get() = _dontStartTillImReady
+    private val REQUEST_CHECK_SETTINGS = 2
     lateinit var mLocation : Location
     lateinit var LocationList : List<LocationRecord>
     var filteredLocationList : MutableList<LocationRecord> = ArrayList<LocationRecord>()
@@ -55,8 +70,13 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
 
          for (location in LocationList){
             if(location.date == selectedDay.toString() && location.month == selectedMonth.toString()){
-                mapList.add(location)
-                Log.i(ActivityTag,"InfindSelectedDateLocationEntries Selected Day/Month"+selectedDay+"/"+selectedMonth+" Location : "+location.latitude)
+                if(location.accuracy!=null.toString() && location.accuracy.toFloat() < 50.0) {
+                    mapList.add(location)
+                    Log.i(
+                        ActivityTag,
+                        "InfindSelectedDateLocationEntries Selected Day/Month" + selectedDay + "/" + selectedMonth + " Location : " + location.latitude
+                    )
+                }
             }
         }
         mapList.sortBy { it.timeStamp }
@@ -78,5 +98,122 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
             prevLongitude = location.longitude.toDouble()
         }
         this.mapList = filteredLocationList
+    }
+    val locationRequest = LocationRequest.create()?.apply {
+        interval = 100000
+        fastestInterval = 5000
+        smallestDisplacement = 17f
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+    fun setupLocationListener(context: Context, activity : Activity) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            setupPermissions(context, activity)
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    mLocation = location
+                    Log.i(
+                        ActivityTag,
+                        " Initialising mLocation => Latitude : " + mLocation.latitude + " Longitude : " + mLocation.longitude
+                    )
+                }
+            }
+
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest!!)
+        val client: SettingsClient = LocationServices.getSettingsClient(activity)
+        val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+        task.addOnSuccessListener { locationSettingsResponse ->
+            if(locationSettingsResponse.locationSettingsStates.isLocationPresent)
+                startLocationUpdates(context,activity)
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    exception.startResolutionForResult(
+                        activity,
+                        REQUEST_CHECK_SETTINGS
+                    )
+                } catch (sendEx: IntentSender.SendIntentException) {
+                }
+            }
+        }
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                locationResult ?: return
+                for (location in locationResult.locations) {
+                    mLocation = Location(location)
+                    Log.i(ActivityTag,"In onLocationResult Latitude : " + location.latitude + " Longitude : " + location.longitude)
+                    var date = Calendar.getInstance()
+                    var locationRecordNew = LocationRecord(
+                        (location.time),
+                        location.latitude.toString(),
+                        location.longitude.toString(),
+                        date.get(Calendar.MONTH).toString(),
+                        date.get(Calendar.DAY_OF_MONTH).toString(),
+                        date.get(Calendar.DAY_OF_WEEK).toString(),
+                        false,
+                        location.accuracy.toString(),
+                        location.isFromMockProvider
+                    )
+                    Log.i(
+                        ActivityTag,"Accuracy : " + location.accuracy + " IsMock : " + location.isFromMockProvider)
+                    insert(locationRecordNew)
+                }
+            }
+        }
+    }
+    fun setupPermissions(context : Context, activity: Activity) {
+        val locationCoarsePermission = ContextCompat.checkSelfPermission(context,
+            Manifest.permission.ACCESS_COARSE_LOCATION)
+        val locationFinePermission = ContextCompat.checkSelfPermission(context,
+            Manifest.permission.ACCESS_FINE_LOCATION)
+        val locationBackgroundPermission = ContextCompat.checkSelfPermission(context,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        var mIndex: Int = -1
+        var requestList: Array<String> = Array(10, { "" } )
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            mIndex ++
+            requestList[mIndex] = Manifest.permission.ACCESS_FINE_LOCATION
+        }
+        if(locationBackgroundPermission != PackageManager.PERMISSION_GRANTED){
+            Log.i(ActivityTag, "Permission to access background Location denied")
+            mIndex++
+            requestList[mIndex] = Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        }else{
+            Log.i(ActivityTag,"Permission to access background Location Granted")
+        }
+        if(mIndex!=-1){
+            ActivityCompat.requestPermissions(activity, requestList, RECORD_REQUEST_CODE)
+        }
+    }
+
+    fun startLocationUpdates(context: Context, activity: Activity) {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            setupPermissions(context,activity)
+            return
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+            locationCallback,
+            Looper.getMainLooper())
     }
 }

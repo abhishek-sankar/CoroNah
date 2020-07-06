@@ -41,7 +41,6 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         var maxDate : LocationRecord?
         var minDate : LocationRecord?
         Log.i(ActivityTag,"Inside ProfileFragment.onCreateView() Selected Date : "+selectedDay+ " Selected month : "+selectedMonth)
@@ -66,7 +65,6 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
         })
         val user = FirebaseAuth.getInstance().currentUser
         binding = DataBindingUtil.inflate<FragmentProfileBinding>(inflater, R.layout.fragment_profile, container, false)
-
         binding.calendarView.setOnDateChangeListener { calendarView, i, i2, i3 ->
             Log.i(ActivityTag,"OnDateChange Strings are : "+i+" "+i2+" "+i3)
             selectedDay = i3
@@ -98,21 +96,16 @@ class ProfileFragment : Fragment(), OnMapReadyCallback {
             var polylineOptions = PolylineOptions()
             googleMap.clear()
             for(item in viewModel.mapList.indices){
-//            var line = googleMap.addPolyline(
                 polylineOptions.add(LatLng(prevLatitude,prevLongitude),
                     LatLng(viewModel.mapList[item].latitude.toDouble(), viewModel.mapList[item].longitude.toDouble()))
                 prevLatitude = viewModel.mapList[item].latitude.toDouble()
                 prevLongitude = viewModel.mapList[item].longitude.toDouble()
-//                )
-            Log.i(ActivityTag,"InPolylineCreation :"+viewModel.mapList[item].latitude)
+                Log.i(ActivityTag,"InPolylineCreation :"+viewModel.mapList[item].latitude)
                 polylineOptions.width(4F).color(Color.BLUE).geodesic(true)
                 polyLineFinal = googleMap.addPolyline(polylineOptions)
-
         }
             if(!viewModel.mapList.isEmpty())
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(viewModel.mapList[0].latitude.toDouble(),viewModel.mapList[0].longitude.toDouble()), 16f))
         })
-
-
     }
 }
