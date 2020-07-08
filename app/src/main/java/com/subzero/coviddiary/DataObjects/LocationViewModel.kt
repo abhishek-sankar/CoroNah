@@ -79,6 +79,7 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
         )
 
         for (location in LocationList) {
+            Log.d("Location.date : "+ location.date+ " selectedDay.toString() : "+ selectedDay.toString(),"Location.month : "+ location.month+ " selectedMonth.toString() : "+ selectedMonth.toString())
             if (location.date == selectedDay.toString() && location.month == selectedMonth.toString()) {
                 if (location.accuracy != null.toString() && location.accuracy.toFloat() < 50.0) {
                     mapList.add(location)

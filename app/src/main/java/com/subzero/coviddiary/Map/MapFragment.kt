@@ -77,13 +77,19 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.datePickerRecyclerView.apply {
             Log.i(activityTag,"inDatePickerrecyclerView, uniqueDateList.size() = "+viewModel.uniqueDateList.size.toString())
             layoutManager = LinearLayoutManager(activity,RecyclerView.HORIZONTAL,false)
-            adapter =  DatePickerAdapter(viewModel.uniqueDateList)
+            adapter =  DatePickerAdapter(viewModel.uniqueDateList, { date: Date -> dateItemClicked(date) })
         }
-//        binding.greetingTextView.text =
-//            "Hey ${(user!!.displayName)?.split("\\s".toRegex())?.first()},\nAll the best.\nYou do the writing, we do the tracking :)"
+
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)//onViewCreated migrate
         return binding.root
+    }
+
+    fun dateItemClicked(date: Date) {
+        selectedDay = date.date
+        selectedMonth = date.month
+        Log.i(activityTag,"Item Clicked, date is Date : "+ date.day +" Month is : "+date.month)
+        viewModel.findSelectedDateLocationEntries(selectedDay,selectedMonth)
     }
 
     @SuppressLint("MissingPermission")
