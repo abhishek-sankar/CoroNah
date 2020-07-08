@@ -18,7 +18,12 @@ import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.subzero.coviddiary.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -42,14 +47,17 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     var mapList: MutableList<LocationRecord> = ArrayList<LocationRecord>()
     var uniqueDateList: MutableList<Date> = ArrayList<Date>()
     val allLocations: LiveData<List<LocationRecord>>
-
+    private lateinit var firebaseDataRef: DatabaseReference
+    val user = Firebase.auth.currentUser
     init {
+
         val locationDataDao =
-            LocationDatabase.getDatabase(application, viewModelScope).locationDataDao()
+                LocationDatabase.getDatabase(application, viewModelScope).locationDataDao()
         repository = LocationRepository(locationDataDao)
         allLocations = repository.allLocations
         _dontStartTillImReady.value = false
         LocationList = emptyList()
+
     }
 
     fun insert(locationRecord: LocationRecord) = viewModelScope.launch(Dispatchers.IO) {
@@ -59,6 +67,7 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     fun findUniqueDates(LocationList: List<LocationRecord>) {
         Log.i(ActivityTag, "Inside fundUniqueDates() LocationViewModel")
         for (location in LocationList) {
+            firebaseNewDataEntry(LocationList)
 //            var dateString = location.month + " " + location.date + " " + location.day
             var dateNew = Date(120,location.month.toInt(),location.date.toInt())
             if (!uniqueDateList.contains(dateNew)) {
@@ -188,6 +197,7 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
                         "Accuracy : " + location.accuracy + " IsMock : " + location.isFromMockProvider
                     )
                     insert(locationRecordNew)
+
                 }
             }
         }
@@ -242,5 +252,31 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
             locationCallback,
             Looper.getMainLooper()
         )
+    }
+    fun firebaseNewDataEntry(it: List<LocationRecord>?) {
+        firebaseDataRef = Firebase.database.reference.child("userList").child(user!!.uid).child("timeStamps")
+        for(locData in it!!){
+
+
+            if(!locData.uploadedToFirebaseDatabase)    {
+                firebaseDataRef.child(locData.timeStamp.toString()).child("lat").setValue(locData.latitude).addOnCompleteListener(OnCompleteListener<Void?> { task ->
+                    if (task.isSuccessful) {
+                        firebaseDataRef.child(locData.timeStamp.toString()).child("lon").setValue(locData.longitude).addOnCompleteListener(
+                            OnCompleteListener<Void?> { task2 ->
+                            if (task2.isSuccessful) {
+                                locData.uploadedToFirebaseDatabase=true
+//                                updateFirebase(locData)
+                                Log.wtf("Data is up",locData.timeStamp.toString())
+                            } else {
+                                Log.wtf("Error UP data", task.exception!!.message)
+                            }
+                        })
+                    } else {
+                        Log.wtf("Error UP data", task.exception!!.message)
+                    }
+                })
+
+            }
+        }
     }
 }

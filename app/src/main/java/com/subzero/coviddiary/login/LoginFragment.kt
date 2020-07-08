@@ -59,7 +59,9 @@ class LoginFragment : Fragment() {
             }
         }else{
             val navController = findNavController()
-//            navController.navigate(R.id.profileFragment)
+            navController.navigate(R.id.profile)
+//            Navigation.findNavController(this.requireView())
+//                .navigate(R.id.action_loginFragment_to_profileFragment)
         }
         return binding.root
     }
@@ -71,7 +73,7 @@ class LoginFragment : Fragment() {
             Log.i("It works", "Hurray")
             if (resultCode == Activity.RESULT_OK) {
                 Navigation.findNavController(this.requireView())
-//                    .navigate(R.id.action_loginFragment_to_profileFragment)
+                    .navigate(R.id.action_loginFragment_to_profileFragment)
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the
