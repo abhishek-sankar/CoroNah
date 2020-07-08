@@ -15,7 +15,9 @@
         <LinearLayout
             android:id="@+id/main_activity_linear_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
+            app:layout_constraintTop_toTopOf="parent">
 
             <fragment
                 android:id="@+id/bottom_nav"
@@ -31,11 +33,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#488467"
-            app:itemRippleColor="@color/colorPrimary"
-            app:itemIconTint="@color/colorAccent"
-            app:itemTextColor="@color/colorAccent"
             app:backgroundTint="@color/colorPrimaryDark"
             app:itemBackground="@android:color/transparent"
+            app:itemIconTint="@color/colorAccent"
+            app:itemRippleColor="@color/colorPrimary"
+            app:itemTextColor="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

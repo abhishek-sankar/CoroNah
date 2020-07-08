@@ -6,6 +6,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:padding="16dp"
+        android:background="@drawable/rounded_rectangle"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:id="@+id/date_picker_layout"
