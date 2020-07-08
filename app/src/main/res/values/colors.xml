@@ -8,4 +8,5 @@
     <color name="ocean_green">#52b788</color>
     <color name="celadon">#b2d3a8</color>
     <color name="medium_champagne">#ede5a6</color>
+    <color name="black_overlay">#66000000</color>
 </resources>
