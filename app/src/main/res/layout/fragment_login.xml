@@ -8,6 +8,7 @@
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ic_background"
     tools:context=".login.LoginFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,11 +23,13 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="128dp"
             android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_undraw_secure_login_pdn4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/avatars" />
+            tools:src="@drawable/ic_undraw_secure_login_pdn4"
+            android:contentDescription="TODO" />
 
         <TextView
             android:id="@+id/login_text_view"

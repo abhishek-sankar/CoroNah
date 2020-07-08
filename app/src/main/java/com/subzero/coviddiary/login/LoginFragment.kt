@@ -42,6 +42,7 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         val binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater,
             R.layout.fragment_login,container,false)
+//        binding.imageView.setImageDrawable(resources.getDrawable(R.drawable.ic_undraw_secure_login_pdn4))
         val providers = arrayListOf(
             AuthUI.IdpConfig.GoogleBuilder().build())
         val user = FirebaseAuth.getInstance().currentUser
@@ -58,7 +59,7 @@ class LoginFragment : Fragment() {
             }
         }else{
             val navController = findNavController()
-            navController.navigate(R.id.profileFragment)
+//            navController.navigate(R.id.profileFragment)
         }
         return binding.root
     }
@@ -70,7 +71,7 @@ class LoginFragment : Fragment() {
             Log.i("It works", "Hurray")
             if (resultCode == Activity.RESULT_OK) {
                 Navigation.findNavController(this.requireView())
-                    .navigate(R.id.action_loginFragment_to_profileFragment)
+//                    .navigate(R.id.action_loginFragment_to_profileFragment)
                 // ...
             } else {
                 // Sign in failed. If response is null the user canceled the

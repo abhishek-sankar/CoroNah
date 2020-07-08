@@ -2,43 +2,41 @@ package com.subzero.coviddiary
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.IntentSender
 import android.content.pm.PackageManager
-import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.*
-import com.google.android.gms.tasks.Task
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.subzero.coviddiary.DataObjects.LocationRecord
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import com.subzero.coviddiary.DataObjects.LocationViewModel
+import com.subzero.coviddiary.Map.MapFragment
+import com.subzero.coviddiary.Profile.ProfileFragment
+import com.subzero.coviddiary.Settings.SettingsFragment
 import com.subzero.coviddiary.databinding.ActivityMainBinding
-import java.sql.Timestamp
-import java.time.Instant
-import java.time.format.DateTimeFormatter
-import java.util.*
+import kotlinx.android.synthetic.main.fragment_map.*
 
 class MainActivity : AppCompatActivity() {
-    private val TAG = "PermissionDemo"
-    val ActivityTag = "Activity-MainActivity"
-    private val requestingLocationUpdates = true
-    private val RECORD_REQUEST_CODE = 1
-    private lateinit var ViewModel: LocationViewModel
-    private lateinit var database : DatabaseReference
+    private val tag = "Activity-MainActivity"
+    private lateinit var navController: NavController
+    private lateinit var viewModel: LocationViewModel
+//    var mapFragment = MapFragment()
+//    var settingsFragment = SettingsFragment()
+//    var profileFragment = ProfileFragment()
+//    var fragmentManager = supportFragmentManager
+//    var fragmentActive : Fragment = mapFragment
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide()
             //Setup Permissions => DONE
             //In case its not there, request => DONE
         //Request Internet Access too
@@ -49,18 +47,50 @@ class MainActivity : AppCompatActivity() {
         //Implement slider to change rate
         //Check for data and Get data from DB
             //Create Login fragment => DONE
+        //QR check if both person and place have had exposure
         setupViewModel()
-        ViewModel.setupPermissions(this, this)
-        ViewModel.setupLocationListener(this,this)
+        viewModel.setupPermissions(this, this)
+        viewModel.setupLocationListener(this,this)
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+//        fragmentManager.beginTransaction().add(R.id.bottom_nav,settingsFragment).hide(settingsFragment).commit()
+//        fragmentManager.beginTransaction().add(R.id.bottom_nav,profileFragment).hide(profileFragment).commit()
+//        fragmentManager.beginTransaction().add(R.id.bottom_nav,mapFragment).commit()
+        navController = Navigation.findNavController(this,R.id.bottom_nav)
+        binding.bottomNavigationView.setupWithNavController(navController)
+
+//        binding.bottomNavigationView.setOnNavigationItemReselectedListener {
+//            fun onOptionsItemSelected(item: MenuItem): Boolean {
+//                when(item.itemId){
+//                    R.id.map->{fragmentManager.beginTransaction().hide(fragmentActive).show(mapFragment)
+//                                fragmentActive = mapFragment
+//                                return true
+//                    }
+//                    R.id.settings->{fragmentManager.beginTransaction().hide(fragmentActive).show(settingsFragment)
+//                        fragmentActive = settingsFragment
+//                        return true
+//                    }
+//                    R.id.profile->{fragmentManager.beginTransaction().hide(fragmentActive).show(profileFragment)
+//                        fragmentActive = profileFragment
+//                        return true
+//                    }
+//                }
+//                return false
+//            }
+//        }
+        NavigationUI.setupActionBarWithNavController(this, navController)
+
     }
 
-    fun setupViewModel() {
-        ViewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
-        ViewModel.allLocations.observe(this, androidx.lifecycle.Observer {
-            ViewModel.LocationList = it
+    override fun onSupportNavigateUp(): Boolean {
+        return NavigationUI.navigateUp(navController, null)
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+        viewModel.allLocations.observe(this, androidx.lifecycle.Observer {
+            viewModel.LocationList = it
         })
-        Log.i(ActivityTag, "ViewModel.allLocations : " + ViewModel.allLocations.toString())
+        Log.i(tag, "ViewModel.allLocations : " + viewModel.allLocations.toString())
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
@@ -72,6 +102,7 @@ class MainActivity : AppCompatActivity() {
                     if ((ContextCompat.checkSelfPermission(this@MainActivity,
                             Manifest.permission.ACCESS_COARSE_LOCATION) ==
                                 PackageManager.PERMISSION_GRANTED)) {
+                        Log.i(tag,"Permission Granted")
                     }
                 } else {
                     Toast.makeText(this, "Location Permission Denied", Toast.LENGTH_SHORT).show()

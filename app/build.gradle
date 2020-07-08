@@ -86,4 +86,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "androidx.arch.core:core-testing:$rootProject.coreTestingVersion"
 
+// Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
 }

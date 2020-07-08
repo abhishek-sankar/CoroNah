@@ -3,42 +3,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/home">
+
     <fragment
-        android:id="@+id/checklistFragment"
-        android:name="com.subzero.coviddiary.checklist.ChecklistFragment"
-        android:label="ChecklistFragment"
-        tools:layout="@layout/fragment_checklist">
+        android:id="@+id/home"
+        android:name="com.subzero.coviddiary.Map.MapFragment"
+        android:label="MapFragment"
+        tools:layout="@layout/fragment_map">
         <action
-            android:id="@+id/action_checklistFragment_to_addEntryFragment"
-            app:destination="@id/addEntryFragment" />
+            android:id="@+id/action_mapFragment_to_settingsFragment"
+            app:destination="@id/settings"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:exitAnim="@anim/fui_slide_out_left" />
+        <action
+            android:id="@+id/action_home_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:exitAnim="@anim/fui_slide_out_left" />
     </fragment>
     <fragment
-        android:id="@+id/addEntryFragment"
-        android:name="com.subzero.coviddiary.addentry.AddEntryFragment"
-        tools:layout="@layout/fragment_add_entry"
-        android:label="AddEntryFragment" >
-        <argument
-            android:name="modeOfTransport"
-            app:argType="string"
-            app:nullable="true" />
-        <argument android:name="firebaseUId" />
+        android:id="@+id/settings"
+        android:name="com.subzero.coviddiary.Settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_mapFragment"
+            app:destination="@id/home" />
+        <action
+            android:id="@+id/action_settings_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.subzero.coviddiary.login.LoginFragment"
-        tools:layout="@layout/fragment_login"
-        android:label="LoginFragment" >
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/action_loginFragment_to_checklistFragment"
-            app:destination="@id/checklistFragment" />
+            android:id="@+id/action_loginFragment_to_home"
+            app:destination="@id/home" />
+        <action
+            android:id="@+id/action_loginFragment_to_settings"
+            app:destination="@id/settings" />
         <action
             android:id="@+id/action_loginFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            app:destination="@id/profile" />
     </fragment>
     <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.subzero.coviddiary.profile.ProfileFragment"
-        tools:layout="@layout/fragment_profile"
-        android:label="ProfileFragment" />
+        android:id="@+id/profile"
+        android:name="com.subzero.coviddiary.Profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_settings"
+            app:destination="@id/settings"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:exitAnim="@anim/fui_slide_out_left"
+            app:popEnterAnim="@anim/fui_slide_in_right"
+            app:popExitAnim="@anim/fui_slide_out_left" />
+        <action
+            android:id="@+id/action_profileFragment_to_home"
+            app:destination="@id/home"
+            app:enterAnim="@anim/fui_slide_in_right"
+            app:exitAnim="@anim/fui_slide_out_left" />
+    </fragment>
 </navigation>
