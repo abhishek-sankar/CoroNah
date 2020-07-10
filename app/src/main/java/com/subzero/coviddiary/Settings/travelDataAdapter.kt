@@ -41,6 +41,5 @@ class travelDataAdapter(val timeList: MutableList<travelDataItem>) : RecyclerVie
         holder.fromLocation.text = currentItem.startLocationString
         holder.toLocationTime.text = currentItem.startTime
 
-
     }
 }

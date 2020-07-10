@@ -59,7 +59,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             viewModel.findSelectedDateLocationEntries(selectedDay,selectedMonth)
             viewModel._dontStartTillImReady.value = viewModel._dontStartTillImReady.value != true
             viewModel.findUniqueDates(viewModel.LocationList)
-             maxDate  = viewModel.LocationList.maxBy {
+
+
+            maxDate  = viewModel.LocationList.maxBy {
                 it.timeStamp
             }
             minDate  = viewModel.LocationList.minBy {
@@ -82,7 +84,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 //            viewModel.findSelectedDateLocationEntries(selectedDay, selectedMonth)
 //        }
         binding.datePickerRecyclerView.apply {
-            Log.i(activityTag,"inDatePickerrecyclerView, uniqueDateList.size() = "+viewModel.uniqueDateList.size.toString())
+            Log.wtf(activityTag,"inDatePickerrecyclerView, uniqueDateList.size() = "+viewModel.uniqueDateList.size.toString())
             layoutManager = LinearLayoutManager(activity,RecyclerView.HORIZONTAL,false)
             adapter =  DatePickerAdapter(viewModel.uniqueDateList, { date: Date -> dateItemClicked(date) })
         }

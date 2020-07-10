@@ -81,8 +81,24 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     }
     fun findTravelData(LocationList: List<LocationRecord>){
         Log.wtf("calc travelData","Find data")
+        var driver = 0
+        var tempLocation : String = "null"
+        var tempTime:String = "null"
+        var newTravelDataItem:travelDataItem
         for (location in LocationList){
-            
+            if(driver == 0){
+                driver=1
+                tempLocation = location.latitude
+                tempTime = location.date+ " "+ location.month
+            }else
+            {
+                driver=0
+                newTravelDataItem = travelDataItem(tempLocation,location.latitude,tempTime,location.date+ " "+ location.month)
+                if(!travelDataList.contains(newTravelDataItem)){
+                    travelDataList.add(newTravelDataItem)
+                }
+            }
+
         }
     }
 

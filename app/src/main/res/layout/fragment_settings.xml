@@ -12,21 +12,45 @@
     tools:context=".Settings.SettingsFragment">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/constcover"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layoutDescription="@xml/fragment_settings_scene"
+        android:orientation="vertical"
+        >
+
+
+            <TextView
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Travel Data"
+                android:fontFamily="@font/poppins_bold"
+                android:textSize="30sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:padding="13dp"
+                />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/travel_data_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="20dp"
             tools:layout_editor_absoluteY="16dp"
             tools:listitem="@layout/travel_data_card"
-            android:padding="10dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header"
             />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </FrameLayout>
 </layout>

@@ -87,5 +87,8 @@ dependencies {
 
 // Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+//Motion
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
+
 
 }
