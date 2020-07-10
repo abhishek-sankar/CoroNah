@@ -8,4 +8,7 @@ class LocationRepository(private val locationDataDao: locationDataDao) {
     suspend fun insert(locationRecord: LocationRecord){
         locationDataDao.insert(locationRecord)
     }
+    suspend fun updateFirebase(locationRecord: LocationRecord){
+        locationDataDao.updateFirebaseStatus(locationRecord)
+    }
 }

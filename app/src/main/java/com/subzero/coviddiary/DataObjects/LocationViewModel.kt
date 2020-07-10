@@ -258,6 +258,9 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
             Looper.getMainLooper()
         )
     }
+    fun updateFirebaseStatus(locData: LocationRecord) = viewModelScope.launch (Dispatchers.IO){
+        repository.updateFirebase(locData)
+    }
     fun firebaseNewDataEntry(it: List<LocationRecord>?) {
         firebaseDataRef = Firebase.database.reference.child("userList").child(user!!.uid).child("timeStamps")
         for(locData in it!!){
@@ -268,7 +271,8 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
                             OnCompleteListener<Void?> { task2 ->
                             if (task2.isSuccessful) {
                                 locData.uploadedToFirebaseDatabase=true
-//                                updateFirebase(locData)
+                                updateFirebaseStatus(locData)
+
                                 Log.wtf("Data is up",locData.timeStamp.toString())
                             } else {
                                 Log.wtf("Error UP data", task.exception!!.message)

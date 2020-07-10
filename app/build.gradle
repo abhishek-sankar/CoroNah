@@ -5,15 +5,14 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-kapt'
 android {
-    compileSdkVersion 29
 
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.subzero.coviddiary4"
         minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         def secureProps = new Properties()
         if (file("../../../secure.properties").exists()) {
