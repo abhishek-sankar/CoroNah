@@ -45,6 +45,9 @@ class DatePickerAdapter(var dateList: MutableList<Date>, val clickListener: (Dat
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.map_date_picker, parent, false)
+
+
+
         return ViewHolder(view)
     }
 

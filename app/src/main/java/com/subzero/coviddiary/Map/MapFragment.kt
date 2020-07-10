@@ -132,7 +132,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             googleMap.clear()
             var flag = true
             if(viewModel.mapList.isNotEmpty())
-            {prevLatitude = viewModel.mapList[0].latitude.toDouble()
+            { prevLatitude = viewModel.mapList[0].latitude.toDouble()
             prevLongitude = viewModel.mapList[0].longitude.toDouble()}
             for(item in viewModel.mapList.indices){
                 if(flag){

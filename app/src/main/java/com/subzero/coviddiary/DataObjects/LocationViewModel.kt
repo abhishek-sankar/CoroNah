@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.subzero.coviddiary.MainActivity
+import com.subzero.coviddiary.Settings.travelDataItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -46,11 +47,11 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     var filteredLocationList: MutableList<LocationRecord> = ArrayList<LocationRecord>()
     var mapList: MutableList<LocationRecord> = ArrayList<LocationRecord>()
     var uniqueDateList: MutableList<Date> = ArrayList<Date>()
+    var travelDataList:MutableList<travelDataItem> = ArrayList<travelDataItem>()
     val allLocations: LiveData<List<LocationRecord>>
     private lateinit var firebaseDataRef: DatabaseReference
     val user = Firebase.auth.currentUser
     init {
-
 
         val locationDataDao =
                 LocationDatabase.getDatabase(application, viewModelScope).locationDataDao()
@@ -67,16 +68,21 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun findUniqueDates(LocationList: List<LocationRecord>) {
+        firebaseNewDataEntry(LocationList)
         Log.i(ActivityTag, "Inside fundUniqueDates() LocationViewModel")
         for (location in LocationList) {
-            firebaseNewDataEntry(LocationList)
 //            var dateString = location.month + " " + location.date + " " + location.day
             var dateNew = Date(120,location.month.toInt(),location.date.toInt())
             if (!uniqueDateList.contains(dateNew)) {
-
                 uniqueDateList.add(dateNew)
 
             }
+        }
+    }
+    fun findTravelData(LocationList: List<LocationRecord>){
+        Log.wtf("calc travelData","Find data")
+        for (location in LocationList){
+            
         }
     }
 
