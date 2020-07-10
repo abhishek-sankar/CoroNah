@@ -51,12 +51,14 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     val user = Firebase.auth.currentUser
     init {
 
+
         val locationDataDao =
                 LocationDatabase.getDatabase(application, viewModelScope).locationDataDao()
         repository = LocationRepository(locationDataDao)
         allLocations = repository.allLocations
         _dontStartTillImReady.value = false
         LocationList = emptyList()
+
 
     }
 
@@ -71,7 +73,9 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
 //            var dateString = location.month + " " + location.date + " " + location.day
             var dateNew = Date(120,location.month.toInt(),location.date.toInt())
             if (!uniqueDateList.contains(dateNew)) {
+
                 uniqueDateList.add(dateNew)
+
             }
         }
     }
@@ -256,8 +260,6 @@ class LocationViewModel(application: Application) : AndroidViewModel(application
     fun firebaseNewDataEntry(it: List<LocationRecord>?) {
         firebaseDataRef = Firebase.database.reference.child("userList").child(user!!.uid).child("timeStamps")
         for(locData in it!!){
-
-
             if(!locData.uploadedToFirebaseDatabase)    {
                 firebaseDataRef.child(locData.timeStamp.toString()).child("lat").setValue(locData.latitude).addOnCompleteListener(OnCompleteListener<Void?> { task ->
                     if (task.isSuccessful) {
