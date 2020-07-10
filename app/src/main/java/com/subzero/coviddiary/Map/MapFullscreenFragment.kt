@@ -1,15 +1,19 @@
 package com.subzero.coviddiary.Map
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.subzero.coviddiary.R
+import com.subzero.coviddiary.databinding.FragmentMapFullscreenBinding
 
 /**
  * An example full-screen fragment that shows and hides the system UI (i.e.
@@ -63,24 +67,32 @@ class MapFullscreenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_map_fullscreen, container, false)
+        val binding = DataBindingUtil.inflate<FragmentMapFullscreenBinding>(inflater, R.layout.fragment_map_fullscreen, container, false)
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            sharedElementEnterTransition = TransitionInflater
+                .from(context).inflateTransition(
+                    android.R.transition.move // you can change this
+                )
+        }
         super.onViewCreated(view, savedInstanceState)
 
-        visible = true
-
-        dummyButton = view.findViewById(R.id.dummy_button)
-        fullscreenContent = view.findViewById(R.id.fullscreen_content)
-        fullscreenContentControls = view.findViewById(R.id.fullscreen_content_controls)
-        // Set up the user interaction to manually show or hide the system UI.
-        fullscreenContent?.setOnClickListener { toggle() }
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        dummyButton?.setOnTouchListener(delayHideTouchListener)
+//        visible = true
+//
+//        dummyButton = view.findViewById(R.id.dummy_button)
+//        fullscreenContent = view.findViewById(R.id.fullscreen_content)
+//        fullscreenContentControls = view.findViewById(R.id.fullscreen_content_controls)
+//        // Set up the user interaction to manually show or hide the system UI.
+//        fullscreenContent?.setOnClickListener { toggle() }
+//
+//        // Upon interacting with UI controls, delay any scheduled hide()
+//        // operations to prevent the jarring behavior of controls going away
+//        // while interacting with the UI.
+//        dummyButton?.setOnTouchListener(delayHideTouchListener)
     }
 
     override fun onResume() {

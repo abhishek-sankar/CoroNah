@@ -9,9 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.replace
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.subzero.coviddiary.DataObjects.LocationRecord
@@ -25,6 +30,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.subzero.coviddiary.databinding.FragmentMapBinding
+import kotlinx.android.synthetic.main.fragment_map.*
+import kotlinx.android.synthetic.main.map_date_picker.view.*
 import java.util.*
 
 
@@ -79,21 +86,36 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             layoutManager = LinearLayoutManager(activity,RecyclerView.HORIZONTAL,false)
             adapter =  DatePickerAdapter(viewModel.uniqueDateList, { date: Date -> dateItemClicked(date) })
         }
+        var snapHelper : LinearSnapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(binding.datePickerRecyclerView)
+        binding.datePickerRecyclerView.onFlingListener = snapHelper
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)//onViewCreated migrate
         return binding.root
     }
 
+
     fun dateItemClicked(date: Date) {
         selectedDay = date.date
         selectedMonth = date.month
+        binding.datePickerRecyclerView.smoothScrollToPosition(viewModel.uniqueDateList.indexOf(date))
+//        binding.datePickerRecyclerView.getChildAt(viewModel.uniqueDateList.indexOf(date)).date_picker_layout.setBackgroundColor(resources.getColor(R.color.colorAccent))
         Log.i(activityTag,"Item Clicked, date is Date : "+ date.day +" Month is : "+date.month)
         viewModel.findSelectedDateLocationEntries(selectedDay,selectedMonth)
     }
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.view?.isClickable = true
+        mapFragment?.view?.setOnClickListener{
+            Log.i(activityTag,"MapViewClicked")
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.map, MapFullscreenFragment())
+                ?.addSharedElement(mapFragment.requireView(), map.enterTransition.toString())
+                ?.commit()
+        }
         val polylineOptions = PolylineOptions()
         polylineOptions.add(LatLng(8.toDouble(),72.toDouble()))
         polyLineFinal = googleMap.addPolyline(polylineOptions)
