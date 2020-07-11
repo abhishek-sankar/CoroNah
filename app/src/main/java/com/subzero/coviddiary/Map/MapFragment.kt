@@ -1,6 +1,7 @@
 package com.subzero.coviddiary.Map
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -47,6 +48,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
+        binding.progressLoader.isIndeterminate = true
+        binding.progressLoader.visibility = View.VISIBLE
         var maxDate : LocationRecord?
         var minDate : LocationRecord?
         Log.i(activityTag,
@@ -54,6 +58,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         )
         viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         viewModel.allLocations.observe(viewLifecycleOwner, Observer { locationList ->
+            binding.progressLoader.visibility = View.GONE
             Log.i(activityTag,"LocationList Observer Fired, it.isEmpty()"+locationList.isEmpty().toString())
             viewModel.LocationList = locationList
             viewModel.findSelectedDateLocationEntries(selectedDay,selectedMonth)
@@ -73,7 +78,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         })
         viewModel.findUniqueDates(LocationList = viewModel.LocationList)
         val user = FirebaseAuth.getInstance().currentUser
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
 //        binding.calendarView.setOnDateChangeListener { _, i, i2, i3 ->
 //            Log.i(activityTag, "OnDateChange Strings are : $i $i2 $i3")
 //            selectedDay = i3
@@ -89,7 +93,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         var snapHelper : LinearSnapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(binding.datePickerRecyclerView)
         binding.datePickerRecyclerView.onFlingListener = snapHelper
-
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)//onViewCreated migrate
         return binding.root
@@ -105,17 +108,23 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewModel.findSelectedDateLocationEntries(selectedDay,selectedMonth)
     }
 
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//        binding.datePickerRecyclerView.smoothScrollToPosition(viewModel.uniqueDateList.size.minus(1))
+//
+//    }
+
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.view?.isClickable = true
-        mapFragment?.view?.setOnClickListener{
-            Log.i(activityTag,"MapViewClicked")
-            activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.map, MapFullscreenFragment())
-                ?.addSharedElement(mapFragment.requireView(), map.enterTransition.toString())
-                ?.commit()
-        }
+//        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+//        mapFragment?.view?.isClickable = true
+//        mapFragment?.view?.setOnClickListener{
+//            Log.i(activityTag,"MapViewClicked")
+//            activity?.supportFragmentManager?.beginTransaction()
+//                ?.replace(R.id.map, MapFullscreenFragment())
+//                ?.addSharedElement(mapFragment.requireView(), map.enterTransition.toString())
+//                ?.commit()
+//        }
         val polylineOptions = PolylineOptions()
         polylineOptions.add(LatLng(8.toDouble(),72.toDouble()))
         polyLineFinal = googleMap.addPolyline(polylineOptions)

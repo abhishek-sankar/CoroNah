@@ -63,20 +63,21 @@ class MainActivity : AppCompatActivity() {
 //                when(item.itemId){
 //                    R.id.map->{fragmentManager.beginTransaction().hide(fragmentActive).show(mapFragment)
 //                                fragmentActive = mapFragment
-//                                return true
+//                                return false
 //                    }
 //                    R.id.settings->{fragmentManager.beginTransaction().hide(fragmentActive).show(settingsFragment)
 //                        fragmentActive = settingsFragment
-//                        return true
+//                        return false
 //                    }
 //                    R.id.profile->{fragmentManager.beginTransaction().hide(fragmentActive).show(profileFragment)
 //                        fragmentActive = profileFragment
-//                        return true
+//                        return false
 //                    }
 //                }
 //                return false
 //            }
 //        }
+        binding.bottomNavigationView.setOnNavigationItemReselectedListener {  }
         NavigationUI.setupActionBarWithNavController(this, navController)
 
     }
