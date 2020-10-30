@@ -1,6 +1,7 @@
 package com.subzero.coviddiary.Map
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.replace
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.subzero.coviddiary.DataObjects.LocationRecord
@@ -25,6 +31,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.subzero.coviddiary.databinding.FragmentMapBinding
+import kotlinx.android.synthetic.main.fragment_map.*
+import kotlinx.android.synthetic.main.map_date_picker.view.*
 import java.util.*
 
 
@@ -40,6 +48,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
+
         var maxDate : LocationRecord?
         var minDate : LocationRecord?
         Log.i(activityTag,
@@ -59,35 +69,28 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 it.timeStamp
             }
             Log.i(activityTag,"Min date :"+minDate?.timeStamp+"Max date : "+maxDate?.timeStamp)
-//            if(minDate!=null && maxDate!=null) {
-//                binding.calendarView.maxDate = maxDate!!.timeStamp
-//                binding.calendarView.minDate = minDate!!.timeStamp
-//            }
         })
         viewModel.findUniqueDates(LocationList = viewModel.LocationList)
         val user = FirebaseAuth.getInstance().currentUser
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
-//        binding.calendarView.setOnDateChangeListener { _, i, i2, i3 ->
-//            Log.i(activityTag, "OnDateChange Strings are : $i $i2 $i3")
-//            selectedDay = i3
-//            selectedMonth = i2
-//            Log.i(activityTag, "OnDateChange Strings are : $selectedDay $selectedMonth")
-//            viewModel.findSelectedDateLocationEntries(selectedDay, selectedMonth)
-//        }
         binding.datePickerRecyclerView.apply {
             Log.i(activityTag,"inDatePickerrecyclerView, uniqueDateList.size() = "+viewModel.uniqueDateList.size.toString())
             layoutManager = LinearLayoutManager(activity,RecyclerView.HORIZONTAL,false)
             adapter =  DatePickerAdapter(viewModel.uniqueDateList, { date: Date -> dateItemClicked(date) })
         }
-
+        var snapHelper : LinearSnapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(binding.datePickerRecyclerView)
+        binding.datePickerRecyclerView.onFlingListener = snapHelper
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)//onViewCreated migrate
         return binding.root
     }
 
+
     fun dateItemClicked(date: Date) {
         selectedDay = date.date
         selectedMonth = date.month
+        binding.datePickerRecyclerView.smoothScrollToPosition(viewModel.uniqueDateList.indexOf(date))
+//        binding.datePickerRecyclerView.getChildAt(viewModel.uniqueDateList.indexOf(date)).date_picker_layout.setBackgroundColor(resources.getColor(R.color.colorAccent))
         Log.i(activityTag,"Item Clicked, date is Date : "+ date.day +" Month is : "+date.month)
         viewModel.findSelectedDateLocationEntries(selectedDay,selectedMonth)
     }

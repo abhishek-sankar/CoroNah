@@ -39,6 +39,7 @@ class DatePickerAdapter(var dateList: MutableList<Date>, val clickListener: (Dat
                else-> itemView.th_text.text = "th"
            }
            itemView.setOnClickListener{clickListener(date)}
+
        }
     }
 

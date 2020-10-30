@@ -24,20 +24,28 @@
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fragmentEnterTransition="@anim/fragment_fade_enter"
+                android:fragmentExitTransition="@anim/fragment_fade_exit"
                 app:defaultNavHost="true"
                 app:navGraph="@navigation/navigation" />
+
+
         </LinearLayout>
+        <!--        app:itemIconTint="@color/colorPrimaryDark"-->
+        <!--        app:itemRippleColor="@color/colorPrimary"-->
+        <!--        app:itemTextColor="@color/colorPrimaryDark"-->
+        <!--        android:background="#488467"-->
+        <!--        app:itemBackground="@android:color/transparent"-->
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#488467"
-            app:backgroundTint="@color/colorPrimaryDark"
-            app:itemBackground="@android:color/transparent"
-            app:itemIconTint="@color/colorAccent"
-            app:itemRippleColor="@color/colorPrimary"
-            app:itemTextColor="@color/colorAccent"
+            app:backgroundTint="@color/colorPrimary"
+            app:itemIconTint="@color/black"
+            app:itemTextAppearanceActive="@style/BottomNavigationViewTextStyle"
+            app:itemTextAppearanceInactive="@style/BottomNavigationViewTextStyle"
+            app:itemTextColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
