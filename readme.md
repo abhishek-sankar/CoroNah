@@ -28,7 +28,7 @@ Upon giving it permissions, it automatically keeps a record of movement. When th
 
 Two cases here; Lets imagine Im a user, and need to go to the place, lets call it Central Perk. 
 
-![Central Perk](https://dev-to-uploads.s3.amazonaws.com/i/tpxwzyp06nt8ay6p44xs.gif)
+![Central Perk](https://dev-to-uploads.s3.amazonaws.com/i/kdlmps77v8cflyzl3gbb.gif)
 
 I check out QR on Central Perk. If it shows green, it means that no one with the risk of exposure has been in the area for the past 15 days. 
 
