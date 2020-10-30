@@ -27,7 +27,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class LocationViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: LocationRepository
+    val repository: LocationRepository
     val ActivityTag = "Activity-LocationViewModel"
     lateinit var fusedLocationClient: FusedLocationProviderClient
     private val RECORD_REQUEST_CODE = 1
